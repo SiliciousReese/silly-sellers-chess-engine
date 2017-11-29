@@ -2,6 +2,9 @@
 
 This program follows the uci protocol
 
+TODO: For now minimal uci support will be the goal. After the engine can
+respond with valid moves more support will be added.
+
 The following is a Description copied from:
 http://wbec-ridderkerk.nl/html/UCIProtocol.html
 
