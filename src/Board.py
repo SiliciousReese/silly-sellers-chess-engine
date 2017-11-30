@@ -131,20 +131,28 @@ class Board():
             if self.board[i] in [3, 4, 5, -3, -4, -5]:
                 pass
             elif self.board[i] == 1:
-                """ Currently white pawns are the only implemented piece """
+                """ Currently pawns are the only implemented piece """
+
                 """ TODO en passant """
 
                 """ TODO Document offsets """
-                pawn_move_offsets = [i + 12, i + 24]
-                pawn_captures_offsets = [i + 11, i + 13]
+                pawn_move_offset = []
+                pawn_captures_offsets = []
 
-                for j in range(len(pawn_move_offsets)):
+                if self.cur_player_white:
+                    pawn_move_offset = i + 12
+                    pawn_captures_offsets = [i + 11, i + 13]
+                    pawn_move_double_offset = i + 24
+                else:
+                    pawn_move_offset = i - 12
+                    pawn_captures_offsets = [i - 11, i - 13]
+                    pawn_move_double_offset = i - 24
 
-                    location = pawn_move_offsets[j]
+                location = pawn_move_offset
 
-                    """ The space is unnocupied """
-                    if self.board[location] == 0:
-                        candidate_moves.append(location)
+                """ The space is unnocupied """
+                if self.board[location] == 0:
+                    candidate_moves.append(location)
 
                 for j in range(len(pawn_captures_offsets)):
 
@@ -152,6 +160,16 @@ class Board():
 
                     if self.board[location] in enemy_pieces_lookup:
                         candidate_moves.append(location)
+
+                if i in [38, 39, 40, 41, 42, 43, 44, 45, 98, 99, 100, 101, 102,
+                        103, 104, 105]:
+
+                    location = pawn_move_double_offset
+
+                    if self.board[location] == 0:
+                        candidate_moves.append(location)
+                    
+
             else:
                 pass
 
