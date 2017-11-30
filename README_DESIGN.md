@@ -65,7 +65,7 @@ Pieces
 
 * King: 6
 
-* Unused: 7
+* Color (white / black): 7
 
 8 x 8 grid
 
@@ -76,8 +76,6 @@ boolean for queen-side and king-side castling
 en pessant (0 - 7)
 
 total bits (8 * 8 * 3) + 2 + 3 bits used
-
-* 64 states unused due to unused board location state
 
 # Calculation Moves #
 
