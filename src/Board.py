@@ -14,15 +14,6 @@ class Board():
 
     Capital is white, underscore is empty
 
-    R, N, B, K, Q, B, N, R,
-    P, P, P, P, P, P, P, P,
-    _, _, _, _, _, _, _, _,
-    _, _, _, _, _, _, _, _,
-    _, _, _, _, _, _, _, _,
-    _, _, _, _, _, _, _, _,
-    p, p, p, p, p, p, p, p,
-    r, n, b, k, q, b, n, r,
-
     bottom left of board, a1 in algebraic notation, is index 0, bottom right is
     index 7, top right is 63.
 
@@ -31,22 +22,20 @@ class Board():
 
     black is negative eg -1 is a black pawn
 
-    7 means out of bounds
-    """
+    Visualization of the board (backwards)
 
-    """
     [X, X, X, X, X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X, X, X, X, X,
-    X, X, R, N, B, K, Q, B, N, R, X, X,
-    X, X, P, P, P, P, P, P, P, P, X, X,
-    X, X, _, _, _, _, _, _, _, _, X, X,
-    X, X, _, _, _, _, _, _, _, _, X, X,
-    X, X, _, _, _, _, _, _, _, _, X, X,
-    X, X, _, _, _, _, _, _, _, _, X, X,
-    X, X, p, p, p, p, p, p, p, p, X, X,
-    X, X, r, n, b, k, q, b, n, r, X, X,
-    X, X, X, X, X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X, X, X, X, X]
+     X, X, X, X, X, X, X, X, X, X, X, X,
+     X, X, R, N, B, K, Q, B, N, R, X, X,
+     X, X, P, P, P, P, P, P, P, P, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, p, p, p, p, p, p, p, p, X, X,
+     X, X, r, n, b, k, q, b, n, r, X, X,
+     X, X, X, X, X, X, X, X, X, X, X, X,
+     X, X, X, X, X, X, X, X, X, X, X, X]
     """
 
     __start_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
@@ -79,6 +68,13 @@ class Board():
         """ Determine which  player's turn it is. White is True and Black is
         False. """
         self.cur_player_white = True
+
+    def __init__(self, fen):
+        pass
+
+    def read_position(self, fen):
+        """ TODO Read position from fen string """
+        pass
 
     def get_all_moves(self):
         """ Returns a list of all valid moves from the current position in
@@ -154,9 +150,6 @@ class Board():
 
             else:
                 pass
-
-            if len(candidate_moves) > 0:
-                print("valid pawn moves:\n" + "from " + str(i) + " to " + str(candidate_moves))
 
     def print_board(self):
         """ Print in reverse order, (black in back) """
