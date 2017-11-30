@@ -38,6 +38,16 @@ class Board():
     def __init__(self):
         self.board = Board.__start_board
 
+    def get_all_moves(self):
+        ''' Returns a list of all valid moves from the current position in
+        algebraic notation '''
+
+        ''' TODO Get moves '''
+
+        ''' TODO Start with uci notation since it is easier to parse, then
+        translate to algebriac '''
+        pass
+
     def print_board(self):
         ''' TODO Print the board to standard out '''
 
