@@ -1,7 +1,11 @@
 #!/usr/bin/env python
-import Board
+from Board import Board
+
+
 def main():
-    board = Board.Board()
+    board = Board()
+    board.print_board()
+
+
 if __name__ == '__main__':
     main()
-    

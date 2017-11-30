@@ -30,4 +30,34 @@ class Board():
                      0, 0, 0, 0, 0, 0, 0, 0,
                      -1, -1, -1, -1, -1, -1, -1, -1,
                      -4, -2, -3, -5, -6, -3, -2, -4]
-    board = __start_board
+
+    ''' Used to convert from board to displayable pieces '''
+    __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "k", "q", "r", "b", "n",
+                     "p"]
+
+    def __init__(self):
+        self.board = Board.__start_board
+
+    def print_board(self):
+        ''' TODO Print the board to standard out '''
+
+        ''' Print in reverse order, (black in back) '''
+        ''' TODO use string builder '''
+
+        line = ''
+
+        ''' Used to split the line after each 8th piece '''
+        ''' TODO Board prints with white in back, which isn't wrong but white
+        looks better in front '''
+        file_count = 0
+        for i in Board.__start_board:
+            file_count += 1
+
+            ''' Add piece and space to string '''
+            line += Board.__piece_chars[i] + " "
+
+            if file_count == 8:
+                line += '\n'
+                file_count = 0
+
+        print(line)
