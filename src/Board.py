@@ -104,10 +104,38 @@ class Board():
         """
 
         """ Find the location of each piece """
-        # cur_pieces_list = []
-        for p in self.board:
-            # if
-            pass
+
+        """ Stores the index of each of the current players pieces """
+        cur_pieces_list = []
+        for i in range(len(self.board) - 1):
+            if self.cur_player_white and self.board[i] in [1, 2, 3, 4, 5, 6]:
+                cur_pieces_list.append(i)
+
+            elif not self.cur_player_white:
+                if self.board[i] in [-1, -2, -3, -4, -5, -6]:
+                    cur_pieces_list.append(i)
+
+        for i in cur_pieces_list:
+            """ Temporarily ignore rooks, bishops and queens """
+            """ TODO Write code for "ray" pieces """
+            if self.board[i] in [3, 4, 5, -3, -4, -5]:
+                pass
+            elif self.boad[i] == 1:
+                """ Currently white pawns are the only implemented piece """
+
+                pawn_move_offsets_8board = [7, 8, 9, 16]
+                pawn_move_offsets_12board = [12 -1, 12, 12 + 1, 12 * 2]
+
+                """ Copy Pawn to 12board """
+                pass
+
+                """ Check candidate moves on 12board, then remove out of bounds moves """
+                pass
+
+                """ Convert candidate moves to 8board """
+
+            else:
+                pass
 
     def print_board(self):
         """ TODO Print the board to standard out """
