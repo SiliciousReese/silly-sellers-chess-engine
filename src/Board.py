@@ -17,8 +17,9 @@ class Board():
     bottom left of board, a1 in algebraic notation, is index 0, bottom right is
     index 7, top right is 63.
 
-    empty location is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6. On
-    the boundary board a 7 is a boundary square to prevent going off the edge.
+    empty location is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6.
+    On the boundary board a 7 is a boundary square to prevent going off the
+    edge.
 
     black is negative eg -1 is a black pawn
 
@@ -51,13 +52,13 @@ class Board():
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
 
-    """ Used to convert from board to displayable pieces. Currently the X in the
-    middle can be used to display the boundary board. Note that the board uses
-    negative numbers for black. This works well with python which allows
+    """ Used to convert from board to displayable pieces. Currently the X in
+    the middle can be used to display the boundary board. Note that the board
+    uses negative numbers for black. This works well with python which allows
     negative indeces.  """
 
-    __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "X", "k", "q", "r", "b",
-                     "n", "p"]
+    __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "X", "k", "q", "r",
+                     "b", "n", "p"]
 
     def __init__(self):
         """ Sets up initial bored configuration """
@@ -85,7 +86,8 @@ class Board():
 
         """ Theory of operation:
 
-            I haven't planned this out fully yet, but here is what I have so far
+            I haven't planned this out fully yet, but here is what I have so
+            far
 
             The plan will be to search for every possible move by looking for
             every piece the current player controls and then using a lookup
@@ -180,4 +182,3 @@ class Board():
             output_string += "\n"
 
         print(output_string)
-
