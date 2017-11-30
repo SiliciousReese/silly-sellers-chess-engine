@@ -18,7 +18,8 @@ class Board():
 
      bottom left is index 0, bottom right is index 7, top 63
 
-     blank is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6
+     blank is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6. On the
+     boundary board a 7 is a boundary square to prevent going off the edge.
 
      black is negative eg -1 black pawn
      '''
@@ -30,6 +31,37 @@ class Board():
                      +0, +0, +0, +0, +0, +0, +0, +0,
                      -1, -1, -1, -1, -1, -1, -1, -1,
                      -4, -2, -3, -5, -6, -3, -2, -4]
+
+    ''' Board used for out of bounds detection. This has the added piece "7",
+    which just means out of bounds. '''
+
+    '''
+    [X, X, X, X, X, X, X, X, X, X, X, X,
+     X, X, X, X, X, X, X, X, X, X, X, X,
+     X, X, R, N, B, K, Q, B, N, R, X, X,
+     X, X, P, P, P, P, P, P, P, P, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, _, _, _, _, _, _, _, _, X, X,
+     X, X, p, p, p, p, p, p, p, p, X, X,
+     X, X, r, n, b, k, q, b, n, r, X, X,
+     X, X, X, X, X, X, X, X, X, X, X, X,
+     X, X, X, X, X, X, X, X, X, X, X, X]
+    '''
+
+    __boundary_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                        +7, +7, +4, +2, +3, +5, +6, +3, +2, +4, +7, +7,
+                        +7, +7, +1, +1, +1, +1, +1, +1, +1, +1, +7, +7,
+                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                        +7, +7, -1, -1, -1, -1, -1, -1, -1, -1, +7, +7,
+                        +7, +7, -4, -2, -3, -5, -6, -3, -2, -4, +7, +7,
+                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
 
     ''' Used to convert from board to displayable pieces '''
     __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "k", "q", "r", "b", "n",
@@ -46,7 +78,24 @@ class Board():
 
         ''' TODO Start with uci notation since it is easier to parse, then
         translate to algebriac '''
-        pass
+
+        ''' Theory of operation:
+
+            I haven't planned this out fully yet, but here is what I have so far
+
+            The plan will be to search for every possible move by looking for
+            every piece the current player controls and then using a lookup
+            table for non 'ray' pieces to look for all their potention moves.
+
+            Steps
+
+            1. Find the location of every piece the current player controls.
+
+            2. TODO If the piece is a 'ray piece', i.e. Bishop, Rook, Queen
+
+            3. Else if it is any other piece, use a lookup table to find all
+            potential moves
+        '''
 
     def print_board(self):
         ''' TODO Print the board to standard out '''
