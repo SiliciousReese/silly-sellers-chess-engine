@@ -60,7 +60,7 @@ class Board():
     __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "X", "k", "q", "r",
                      "b", "n", "p"]
 
-    def __init__(self):
+    def __init__(self, fen=None):
         """ Sets up initial bored configuration """
 
         """ The array to store the board """
@@ -69,9 +69,6 @@ class Board():
         """ Determine which  player's turn it is. White is True and Black is
         False. """
         self.cur_player_white = True
-
-    def __init__(self, fen):
-        pass
 
     def read_position(self, fen):
         """ TODO Read position from fen string """
@@ -120,36 +117,38 @@ class Board():
 
             candidate_moves = []
 
+            enemy_pieces_lookup = []
+            if self.cur_player_white:
+                enemy_pieces_lookup = [-1, -2, -3, -4, -5, -6]
+            else:
+                enemy_pieces_lookup = [1, 2, 3, 4, 5, 6]
+
             """ Temporarily ignore rooks, bishops and queens """
             """ TODO Write code for "ray" pieces """
             if self.board[i] in [3, 4, 5, -3, -4, -5]:
                 pass
             elif self.board[i] == 1:
                 """ Currently white pawns are the only implemented piece """
+                """ TODO en passant """
 
                 """ TODO Document offsets """
-                pawn_move_offsets = [i + 11, i + 12, i + 13, i + 24]
+                pawn_move_offsets = [i + 12, i + 24]
+                pawn_captures_offsets = [i + 11, i + 13]
 
                 for j in range(len(pawn_move_offsets)):
+
                     location = pawn_move_offsets[j]
 
                     """ The space is unnocupied """
                     if self.board[location] == 0:
                         candidate_moves.append(location)
-                    else:
-                        """ TODO Allow captures """
-                        pass
 
-                    if Board.debug:
-                        print(location)
-                        if self.board[location] == 7:
-                            print("Pawn off of board. Starting location "
-                                  + str(i))
-                        elif self.board[location] == 0:
-                            print("location empty")
-                        else:
-                            print("location OCCUPIED")
+                for j in range(len(pawn_captures_offsets)):
 
+                    location = pawn_captures_offsets[j]
+
+                    if self.board[location] in enemy_pieces_lookup:
+                        candidate_moves.append(location)
             else:
                 pass
 
