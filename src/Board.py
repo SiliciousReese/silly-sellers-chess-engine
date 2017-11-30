@@ -12,8 +12,8 @@ class Board:
         if len(start)&len(end)==2:
             if start[0]in values & start[1]in values:
                 if end[0]in values & end[1]in values:
-                    # figure put if piece can move now 
-                
+                    # figure put if piece can move now
+                    pass
     def new_board(self):
         self.chess_board=["RNBQKBNR",
                           "PPPPPPPP",
