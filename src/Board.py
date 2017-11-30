@@ -103,6 +103,9 @@ class Board():
         """ Stores the index of each of the current players pieces. """
         cur_pieces_list = []
 
+        """ List of legal moves. """
+        moves = []
+
         """ Find the location of each of the current players pieces. """
         for i in range(len(self.board) - 1):
             if self.cur_player_white and self.board[i] in [1, 2, 3, 4, 5, 6]:
@@ -151,6 +154,50 @@ class Board():
                         candidate_moves.append(location)
             else:
                 pass
+
+            """ Convert moves to uci """
+            for j in range(len(candidate_moves)):
+                moves.append(
+                    Board.get_algebraic_from_index(i) +
+                    Board.get_algebraic_from_index(
+                        candidate_moves[j]))
+
+        return moves
+
+    def get_algebraic_from_index(index):
+        """ Convert from index to algebraic location """
+        """ i = 26 -> a1, i = 38 -> a2 """
+
+        algebraic = ""
+
+        """ a: 26, 38, 50, 62, 74, 86, 98, 110 """
+
+        """ From location """
+        if index in [26, 38, 50, 62, 74, 86, 98, 110]:
+            algebraic += "a" + str(((index - 2) // 12) - 1)
+
+        elif index in [27, 39, 51, 63, 75, 87, 99, 111]:
+            algebraic = "b" + str(((index - 3) // 12) - 1)
+
+        elif index in [28, 40, 52, 64, 76, 88, 100, 112]:
+            algebraic = "c" + str(((index - 4) // 12) - 1)
+
+        elif index in [29, 41, 53, 65, 77, 89, 101, 113]:
+            algebraic = "d" + str(((index - 5) // 12) - 1)
+
+        elif index in [30, 42, 54, 66, 78, 90, 102, 114]:
+            algebraic = "e" + str(((index - 6) // 12) - 1)
+
+        elif index in [31, 43, 55, 67, 79, 91, 103, 115]:
+            algebraic = "f" + str(((index - 7) // 12) - 1)
+
+        elif index in [32, 44, 56, 68, 80, 90, 104, 116]:
+            algebraic = "g" + str(((index - 8) // 12) - 1)
+
+        elif index in [33, 45, 57, 69, 81, 93, 105, 117]:
+            algebraic = "h" + str(((index - 9) // 12) - 1)
+
+        return algebraic
 
     def print_board(self):
         """ Print in reverse order, (black in back) """
