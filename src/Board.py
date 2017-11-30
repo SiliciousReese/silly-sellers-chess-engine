@@ -3,6 +3,11 @@
 
 class Board():
 
+    """ TODO Use python logging for debugging out """
+    debug = False
+
+    __board_size = 12
+
     """ Start position
 
     Capital is white, underscore is empty
@@ -23,14 +28,14 @@ class Board():
 
      black is negative eg -1 black pawn
      """
-    __start_board = [+4, +2, +3, +5, +6, +3, +2, +4,
-                     +1, +1, +1, +1, +1, +1, +1, +1,
-                     +0, +0, +0, +0, +0, +0, +0, +0,
-                     +0, +0, +0, +0, +0, +0, +0, +0,
-                     +0, +0, +0, +0, +0, +0, +0, +0,
-                     +0, +0, +0, +0, +0, +0, +0, +0,
-                     -1, -1, -1, -1, -1, -1, -1, -1,
-                     -4, -2, -3, -5, -6, -3, -2, -4]
+    # __start_board = [+4, +2, +3, +5, +6, +3, +2, +4,
+    #                  +1, +1, +1, +1, +1, +1, +1, +1,
+    #                  +0, +0, +0, +0, +0, +0, +0, +0,
+    #                  +0, +0, +0, +0, +0, +0, +0, +0,
+    #                  +0, +0, +0, +0, +0, +0, +0, +0,
+    #                  +0, +0, +0, +0, +0, +0, +0, +0,
+    #                  -1, -1, -1, -1, -1, -1, -1, -1,
+    #                  -4, -2, -3, -5, -6, -3, -2, -4]
 
     """ Board used for out of bounds detection. This has the added piece "7",
     which just means out of bounds. """
@@ -50,18 +55,18 @@ class Board():
      X, X, X, X, X, X, X, X, X, X, X, X]
     """
 
-    __boundary_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
-                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
-                        +7, +7, +4, +2, +3, +5, +6, +3, +2, +4, +7, +7,
-                        +7, +7, +1, +1, +1, +1, +1, +1, +1, +1, +7, +7,
-                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
-                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
-                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
-                        +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
-                        +7, +7, -1, -1, -1, -1, -1, -1, -1, -1, +7, +7,
-                        +7, +7, -4, -2, -3, -5, -6, -3, -2, -4, +7, +7,
-                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
-                        +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
+    __start_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                     +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                     +7, +7, +4, +2, +3, +5, +6, +3, +2, +4, +7, +7,
+                     +7, +7, +1, +1, +1, +1, +1, +1, +1, +1, +7, +7,
+                     +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                     +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                     +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                     +7, +7, +0, +0, +0, +0, +0, +0, +0, +0, +7, +7,
+                     +7, +7, -1, -1, -1, -1, -1, -1, -1, -1, +7, +7,
+                     +7, +7, -4, -2, -3, -5, -6, -3, -2, -4, +7, +7,
+                     +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
+                     +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
 
     """ Used to convert from board to displayable pieces. Currently the X in the
     middle can be used to display the boundary board. """
@@ -116,30 +121,43 @@ class Board():
                     cur_pieces_list.append(i)
 
         for i in cur_pieces_list:
+
+            candidate_moves = []
+
             """ Temporarily ignore rooks, bishops and queens """
             """ TODO Write code for "ray" pieces """
             if self.board[i] in [3, 4, 5, -3, -4, -5]:
                 pass
-            elif self.boad[i] == 1:
+            elif self.board[i] == 1:
                 """ Currently white pawns are the only implemented piece """
 
-                pawn_move_offsets_8board = [7, 8, 9, 16]
-                pawn_move_offsets_12board = [12 -1, 12, 12 + 1, 12 * 2]
+                """ TODO Document offsets """
+                pawn_move_offsets = [i + 11, i + 12, i + 13, i + 24]
 
-                """ Copy Pawn to 12board """
-                pass
+                for j in range(len(pawn_move_offsets) - 1):
 
-                """ Check candidate moves on 12board, then remove out of bounds moves """
-                pass
+                    location = pawn_move_offsets[j]
 
-                """ Convert candidate moves to 8board """
+                    """ The space is unnocupied """
+                    if self.board[location] == 0:
+                        candidate_moves.append[location]
+                    else:
+                        """ TODO Allow captures """
+                        pass
+
+                    if Board.debug:
+                        print(location)
+                        if self.board[location] == 7:
+                            print("Pawn off of board. Starting location " + str(i))
+                        elif self.board[location] == 0:
+                            print("location empty")
+                        else:
+                            print("location OCCUPIED")
 
             else:
                 pass
 
     def print_board(self):
-        """ TODO Print the board to standard out """
-
         """ Print in reverse order, (black in back) """
         """ TODO use string builder """
 
@@ -149,13 +167,13 @@ class Board():
         """ TODO Board prints with white in back, which isn't wrong but white
         looks better in front """
         file_count = 0
-        for i in Board.__start_board:
+        for i in self.board:
             file_count += 1
 
             """ Add piece and space to string """
             line += Board.__piece_chars[i] + " "
 
-            if file_count == 8:
+            if file_count == (Board.__board_size):
                 line += '\n'
                 file_count = 0
 
