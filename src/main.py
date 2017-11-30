@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from chess import *
+import Board
 def main():
-    print("main")
-    print(Board)
+    board = Board.Board()
 if __name__ == '__main__':
     main()
+    
