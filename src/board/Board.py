@@ -142,9 +142,16 @@ class Board():
                 j += 1
 
             ranks[i] = tmp
-            # print([ranks[i]])
 
-            # print(tmp)
+            print(tmp)
+            for k in range(8):
+                print("i = " + str(i))
+                print("j = " + str(starting_indices[i]))
+                print("k = " + str(k))
+                print(tmp[k])
+                self.print_board()
+                self.board[starting_indices[i] + k] = Board.__piece_chars.index(tmp[k])
+                # print(Board.__piece_chars.index(tmp[k]))
 
         return ranks
 
