@@ -10,16 +10,18 @@ if __name__ == '__main__':
     board.print_board()
 
     """ Start position """
-    fen1 = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-    fen2 = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+    fens =["rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+           "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+           "k7/8/8/4N3/8/8/8/3K4 b - - 13 56",
+           "rnbqkbnr/pp2pppp/8/2ppP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3"]
 
-    print("trying fen 1")
-    board.read_position(fen1)
+    print("trying fen 3")
+    board.read_position(fens[2])
     board.print_board()
     print()
 
-    print("trying fen 2")
-    board.read_position(fen2)
+    print("trying fen 4")
+    board.read_position(fens[3])
     board.print_board()
     print()
 
@@ -27,6 +29,6 @@ if __name__ == '__main__':
     # print(board.read_position(fen1))
     # print()
 
-    board.print_board()
+    #board.print_board()
 
     # print(board.get_all_moves())
