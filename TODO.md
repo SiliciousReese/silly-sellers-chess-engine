@@ -1,6 +1,8 @@
-1. Start programming a chess engine 
+1. Collaborate on board development
 
-2. Project Management
+2. After merging boards, collaborate on movement generation
+
+3. Project Management
 
     a. Who works on what?
 
@@ -8,4 +10,10 @@
 
     c. Code quality / standards
 
-3. Worry about copyright
+4. Implement UCI
+
+5. Create user interface
+
+    a. Command line options
+
+    b. Graphical
