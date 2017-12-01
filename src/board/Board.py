@@ -141,8 +141,6 @@ class Board():
                     j = 0
                 j += 1
 
-            ranks[i] = tmp
-
             for k in range(8):
                 self.board[starting_indices[i] + k] = Board.__piece_chars.index(tmp[k])
 
@@ -304,19 +302,21 @@ class Board():
         """ TODO Board prints with white in back, which isn't wrong but white
         looks better in front """
         file_count = 0
-        for i in self.board:
-            file_count += 1
+        for i in range(9, 1, -1):
+            for j in range(2, 10):
+                file_count += 1
 
-            """ Use lookup table to translate pieces to strings. Then add the
-            piece and a space to the output string. """
-            output_string += Board.__piece_chars[i] + " "
+                """ Use lookup table to translate pieces to strings. Then add the
+                piece and a space to the output string. """
+                output_string += Board.__piece_chars[self.board[i * 12 + j]] + " "
 
-            if file_count == (Board.__board_size):
-                output_string += "\n"
-                file_count = 0
+                if file_count == 8:
+                    output_string += "\n"
+                    file_count = 0
 
         print(output_string)
 
+    def print_board_layout():
         output_string = ""
         for i in range(12):
             for j in range(12):
