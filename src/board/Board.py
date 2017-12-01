@@ -1,4 +1,4 @@
-from re import match
+import re
 
 """ Board representation """
 
@@ -95,10 +95,52 @@ class Board():
         num_spaces = fen.count(" ")
         num_slashes = fen.count("/")
 
-        """ TODO Match from start of line to first whitespace """
-        fen_board = match('^.* ')
+        """ Simple pattern to match all the valid characters until the first
+        space in an fen string """
+        fen_board = re.search('^([rkqrbnpKQRBNP/12345678])+', fen).group(0)
 
-        return fen_board
+        """ Create a list containing each rank """
+        prev_index = -1
+        cur_index = 0
+        ranks = []
+        for i in range(7):
+            cur_index = fen_board.index('/', prev_index + 1)
+            ranks.append(fen_board[prev_index + 1:cur_index])
+            prev_index = cur_index
+        ranks.append(fen_board[prev_index + 1:len(fen_board)])
+
+        for i in range(len(ranks)):
+            cur_rank = ranks[i]
+            
+            """ Location on the board to start placing pieces """
+            starting_indices = [110, 98, 86, 74, 62, 50, 38, 26]
+
+            #print(cur_rank[0] + ' = ' +
+            #        Board.__piece_chars[self.board[starting_indices[i]]])
+
+            """ Convert empty squares to dots. 
+            for each letter l:
+                if l in lookup_table:
+                   location(l).replace_with(dot_lookup[l - 1])
+            """
+
+            digit_lookup = ['1', '2', '3', '4', '5', '6', '7', '8']
+            num_dots_lookup = ['.', '..', '...', '....', '.....', '......',
+                    '.......', '........']
+            tmp = ranks[i]
+            j = 0
+            while j < len(tmp):
+                num_empty_str = tmp[j]
+                if num_empty_str in digit_lookup:
+                    num_empty = digit_lookup.index(num_empty_str)
+                    tmp = tmp[:j] + num_dots_lookup[num_empty] + tmp[j +
+                            1:len(tmp)]
+                    j = 0
+                j += 1
+
+            print(tmp)
+
+        return ranks
 
     def get_all_moves(self):
         """ Returns a list of all valid moves from the current position in
