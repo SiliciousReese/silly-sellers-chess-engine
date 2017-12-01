@@ -24,3 +24,4 @@ if __name__ == '__main__':
 
     print("printing result of fen1")
     print(board.read_position(fen1))
+    print()
