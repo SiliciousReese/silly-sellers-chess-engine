@@ -20,6 +20,7 @@ if __name__ == '__main__':
 
     print("trying fen 2")
     board.read_position(fen2)
+    print()
 
-    #print(board.read_position(fen1))
-    #print(board.read_position(fen1).group(0))
+    print("printing result of fen1")
+    print(board.read_position(fen1))

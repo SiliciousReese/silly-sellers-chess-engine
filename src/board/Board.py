@@ -124,6 +124,9 @@ class Board():
                    location(l).replace_with(dot_lookup[l - 1])
             """
 
+            """ Solved through trial and error. I don't actually know how this
+            works """
+            """ TODO Document and or rewrite """
             digit_lookup = ['1', '2', '3', '4', '5', '6', '7', '8']
             num_dots_lookup = ['.', '..', '...', '....', '.....', '......',
                     '.......', '........']
@@ -138,7 +141,10 @@ class Board():
                     j = 0
                 j += 1
 
-            print(tmp)
+            ranks[i] = tmp
+            # print([ranks[i]])
+
+            # print(tmp)
 
         return ranks
 
