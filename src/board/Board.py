@@ -2,6 +2,7 @@ import re
 
 """ Board representation """
 
+
 class Board():
     """ Uses a 12 by 12 array to store the board """
 
@@ -67,8 +68,8 @@ class Board():
 
         """ The array to store the board """
         self.board = Board.__start_board
-        
-        if fen != None:
+
+        if fen is not None:
             self.read_position(fen)
 
         """ Determine which  player's turn it is. White is True and Black is
@@ -77,9 +78,9 @@ class Board():
 
     def read_position(self, fen):
         """ TODO Read position from fen string """
-        
-        """ 
-        1. Process Board position: 
+
+        """
+        1. Process Board position:
             Each row is seperated by a /, the finaly (8th) row is ended with a
             space.
 
@@ -89,7 +90,7 @@ class Board():
 
         sample:
 
-        Starting position: 
+        Starting position:
         rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 
         2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
@@ -114,38 +115,38 @@ class Board():
 
         for i in range(len(ranks)):
             cur_rank = ranks[i]
-            
+
             """ Location on the board to start placing pieces """
             starting_indices = [110, 98, 86, 74, 62, 50, 38, 26]
 
-            #print(cur_rank[0] + ' = ' +
-            #        Board.__piece_chars[self.board[starting_indices[i]]])
-
-            """ Convert empty squares to dots. 
+            """
+            Convert empty squares to dots.
             for each letter l:
                 if l in lookup_table:
                    location(l).replace_with(dot_lookup[l - 1])
-            """
 
-            """ Solved through trial and error. I don't actually know how this
+            Solved through trial and error. I don't actually know how this
             works """
             """ TODO Document and or rewrite """
             digit_lookup = ['1', '2', '3', '4', '5', '6', '7', '8']
             num_dots_lookup = ['.', '..', '...', '....', '.....', '......',
-                    '.......', '........']
+                               '.......', '........']
             tmp = ranks[i]
             j = 0
             while j < len(tmp):
                 num_empty_str = tmp[j]
                 if num_empty_str in digit_lookup:
                     num_empty = digit_lookup.index(num_empty_str)
-                    tmp = tmp[:j] + num_dots_lookup[num_empty] + tmp[j +
-                            1:len(tmp)]
+
+                    tmp = tmp[:j] + num_dots_lookup[num_empty] + \
+                        tmp[j + 1:len(tmp)]
+
                     j = 0
                 j += 1
 
             for k in range(8):
-                self.board[starting_indices[i] + k] = Board.__piece_chars.index(tmp[k])
+                start_index = starting_indices[i]
+                self.board[start_index + k] = Board.__piece_chars.index(tmp[k])
 
         return ranks
 
@@ -212,8 +213,8 @@ class Board():
 
             elif self.board[i] == 1:
                 """ Currently pawns are the only implemented piece """
-                candidate_moves += self.get_legal_pawn_moves(i,
-                        enemy_pieces_lookup)
+                candidate_moves += self.get_legal_pawn_moves(
+                    i, enemy_pieces_lookup)
             else:
                 pass
 
@@ -228,7 +229,7 @@ class Board():
 
     def get_legal_pawn_moves(self, i, enemy_pieces_lookup):
         candidate_moves = []
-        
+
         """ TODO en passant """
 
         """ TODO Document offsets """
@@ -255,9 +256,11 @@ class Board():
             if self.board[location] in enemy_pieces_lookup:
                 candidate_moves.append(location)
 
-        if i in [38, 39, 40, 41, 42, 43, 44, 45, 98, 99, 100, 101, 102,
-                103, 104, 105]:
+        pawn_double_lookup = [[38, 39, 40, 41, 42, 43, 44, 45],
+                              [98, 99, 100, 101, 102, 103, 104, 105]]
 
+        if ((self.cur_player_white and i in pawn_double_lookup[0]) or
+                (self.cur_player_white and i not in pawn_double_lookup[1])):
             location = pawn_move_double_offset
 
             if self.board[location] == 0:
@@ -313,9 +316,11 @@ class Board():
             for j in range(2, 10):
                 file_count += 1
 
-                """ Use lookup table to translate pieces to strings. Then add the
-                piece and a space to the output string. """
-                output_string += Board.__piece_chars[self.board[i * 12 + j]] + " "
+                """ Use lookup table to translate pieces to strings. Then add
+                the piece and a space to the output string. """
+
+                output_string += Board.__piece_chars[
+                    self.board[i * 12 + j]] + " "
 
                 if file_count == 8:
                     output_string += "\n"
