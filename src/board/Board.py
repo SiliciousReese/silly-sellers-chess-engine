@@ -67,6 +67,9 @@ class Board():
 
         """ The array to store the board """
         self.board = Board.__start_board
+        
+        if fen != None:
+            self.read_position(fen)
 
         """ Determine which  player's turn it is. White is True and Black is
         False. """
@@ -145,6 +148,10 @@ class Board():
                 self.board[starting_indices[i] + k] = Board.__piece_chars.index(tmp[k])
 
         return ranks
+
+    def get_fen(self):
+        """ TODO Return an fen representation of the current board """
+        pass
 
     def get_all_moves(self):
         """ Returns a list of all valid moves from the current position in
