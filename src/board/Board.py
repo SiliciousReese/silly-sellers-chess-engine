@@ -1,5 +1,6 @@
-""" Board representation """
+from re import match
 
+""" Board representation """
 
 class Board():
     """ Uses a 12 by 12 array to store the board """
@@ -39,6 +40,7 @@ class Board():
      X, X, X, X, X, X, X, X, X, X, X, X]
     """
 
+    """ fen: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 """
     __start_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +4, +2, +3, +5, +6, +3, +2, +4, +7, +7,
@@ -72,7 +74,31 @@ class Board():
 
     def read_position(self, fen):
         """ TODO Read position from fen string """
-        pass
+        
+        """ 
+        1. Process Board position: 
+            Each row is seperated by a /, the finaly (8th) row is ended with a
+            space.
+
+            For each of the 8 rows:
+                Process each letter individually
+                4 = 4 empty spaces
+
+        sample:
+
+        Starting position: 
+        rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+        2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+        """
+
+        num_spaces = fen.count(" ")
+        num_slashes = fen.count("/")
+
+        """ TODO Match from start of line to first whitespace """
+        fen_board = match('^.* ')
+
+        return fen_board
 
     def get_all_moves(self):
         """ Returns a list of all valid moves from the current position in
