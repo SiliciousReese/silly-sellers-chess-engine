@@ -358,7 +358,25 @@ class Board():
         return candidate_moves
 
     def get_king_moves(self, i, enemy_pieces_lookup):
-        return []
+        candidate_moves = []
+
+        # King Movement
+        #
+        # The king is simple, like the knight. The only complicated case is
+        # castling.
+        #
+        # TODO Castling
+
+        king_offsets = [i - 13, i - 12, i - 11, i - 1, i + 1, i + 11, i + 12, i
+                        + 13]
+        valid_locations = enemy_pieces_lookup + [0]
+
+        # Moves and captures
+        for location in king_offsets:
+            if self.board[location] in valid_locations:
+                candidate_moves.append(location)
+
+        return candidate_moves
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location

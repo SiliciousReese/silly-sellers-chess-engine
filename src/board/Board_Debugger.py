@@ -63,7 +63,7 @@ if __name__ == '__main__':
         board.read_position(fens[i])
         # print(Board.get_board_layout())
 
-        print("# Testing fen string number: ", str(i), " #")
+        print("# Testing fen string number:", str(i), "#")
 
         if valid_moves_from_fens[i] is not None:
             moves = sorted(board.get_all_moves())
@@ -78,6 +78,6 @@ if __name__ == '__main__':
         else:
             print("# NOT TESTED: correct moves not known #")
             print(board)
-            print(board.get_all_moves())
+            print(sorted(board.get_all_moves()))
         print()
         print()
