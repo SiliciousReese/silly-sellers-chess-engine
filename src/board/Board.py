@@ -1,47 +1,42 @@
-import re
+# Board representation
 
-""" Board representation """
+import re
 
 
 class Board():
     """ Uses a 12 by 12 array to store the board """
 
-    """ TODO Use python logging for debugging out """
-    debug = False
-
     __board_size = 12
 
-    """
-    Start position
+    # Start position
 
-    Capital is white, underscore is empty
+    # Capital is white, underscore is empty
 
-    bottom left of board, a1 in algebraic notation, is index 0, bottom right is
-    index 7, top right is 63.
+    # bottom left of board, a1 in algebraic notation, is index 0, bottom right
+    # is index 7, top right is 63.
 
-    empty location is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6.
-    On the boundary board a 7 is a boundary square to prevent going off the
-    edge.
+    # empty location is 0, pawn 1, knight 2, bishop 3, rook 4, queen 5, king 6.
+    # On the boundary board a 7 is a boundary square to prevent going off the
+    # edge.
 
-    black is negative eg -1 is a black pawn
+    # black is negative eg -1 is a black pawn
 
-    Visualization of the board (backwards)
+    # Visualization of the board (backwards)
 
-    [X, X, X, X, X, X, X, X, X, X, X, X,
-     X, X, X, X, X, X, X, X, X, X, X, X,
-     X, X, R, N, B, K, Q, B, N, R, X, X,
-     X, X, P, P, P, P, P, P, P, P, X, X,
-     X, X, _, _, _, _, _, _, _, _, X, X,
-     X, X, _, _, _, _, _, _, _, _, X, X,
-     X, X, _, _, _, _, _, _, _, _, X, X,
-     X, X, _, _, _, _, _, _, _, _, X, X,
-     X, X, p, p, p, p, p, p, p, p, X, X,
-     X, X, r, n, b, k, q, b, n, r, X, X,
-     X, X, X, X, X, X, X, X, X, X, X, X,
-     X, X, X, X, X, X, X, X, X, X, X, X]
-    """
+    # [X, X, X, X, X, X, X, X, X, X, X, X,
+    #  X, X, X, X, X, X, X, X, X, X, X, X,
+    #  X, X, R, N, B, K, Q, B, N, R, X, X,
+    #  X, X, P, P, P, P, P, P, P, P, X, X,
+    #  X, X, _, _, _, _, _, _, _, _, X, X,
+    #  X, X, _, _, _, _, _, _, _, _, X, X,
+    #  X, X, _, _, _, _, _, _, _, _, X, X,
+    #  X, X, _, _, _, _, _, _, _, _, X, X,
+    #  X, X, p, p, p, p, p, p, p, p, X, X,
+    #  X, X, r, n, b, k, q, b, n, r, X, X,
+    #  X, X, X, X, X, X, X, X, X, X, X, X,
+    #  X, X, X, X, X, X, X, X, X, X, X, X]
 
-    """ fen: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 """
+    # fen: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
     __start_board = [+7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +4, +2, +3, +5, +6, +3, +2, +4, +7, +7,
@@ -55,10 +50,10 @@ class Board():
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
 
-    """ Used to convert from board to displayable pieces. Currently the X in
-    the middle can be used to display the boundary board. Note that the board
-    uses negative numbers for black. This works well with python which allows
-    negative indeces.  """
+    # Used to convert from board to displayable pieces. Currently the X in the
+    # middle can be used to display the boundary board. Note that the board
+    # uses negative numbers for black. This works well with python which allows
+    # negative indeces.
 
     __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "X", "k", "q", "r",
                      "b", "n", "p"]
@@ -66,19 +61,17 @@ class Board():
     def __init__(self, fen=None):
         """ Sets up initial bored configuration """
 
-        """ The array to store the board """
+        # The array to store the board
         self.board = Board.__start_board
 
         if fen is not None:
             self.read_position(fen)
 
-        """ Determine which  player's turn it is. White is True and Black is
-        False. """
+        # Determine which  player's turn it is. White is True and Black is
+        # False.
         self.cur_player_white = True
 
     def read_position(self, fen):
-        """ TODO Read position from fen string """
-
         """
         1. Process Board position:
             Each row is seperated by a /, the finaly (8th) row is ended with a
@@ -96,14 +89,16 @@ class Board():
         2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
         """
 
+        # TODO Read position from fen string
+
         num_spaces = fen.count(" ")
         num_slashes = fen.count("/")
 
-        """ Simple pattern to match all the valid characters until the first
-        space in an fen string """
+        # Simple pattern to match all the valid characters until the first
+        # space in an fen string
         fen_board = re.search('^([rkqrbnpKQRBNP/12345678])+', fen).group(0)
 
-        """ Create a list containing each rank """
+        # Create a list containing each rank
         prev_index = -1
         cur_index = 0
         ranks = []
@@ -116,18 +111,17 @@ class Board():
         for i in range(len(ranks)):
             cur_rank = ranks[i]
 
-            """ Location on the board to start placing pieces """
+            # Location on the board to start placing pieces
             starting_indices = [110, 98, 86, 74, 62, 50, 38, 26]
 
-            """
-            Convert empty squares to dots.
-            for each letter l:
-                if l in lookup_table:
-                   location(l).replace_with(dot_lookup[l - 1])
+            # Convert empty squares to dots.
+            # for each letter l:
+            #     if l in lookup_table:
+            #        location(l).replace_with(dot_lookup[l - 1])
 
-            Solved through trial and error. I don't actually know how this
-            works """
-            """ TODO Document and or rewrite """
+            # Solved through trial and error. I don't actually know how this
+            # works
+            # TODO Document and or rewrite
             digit_lookup = ['1', '2', '3', '4', '5', '6', '7', '8']
             num_dots_lookup = ['.', '..', '...', '....', '.....', '......',
                                '.......', '........']
@@ -151,42 +145,42 @@ class Board():
         return ranks
 
     def get_fen(self):
-        """ TODO Return an fen representation of the current board """
+        # TODO Return an fen representation of the current board
         pass
 
     def get_all_moves(self):
-        """ Returns a list of all valid moves from the current position in
-        algebraic notation """
+        # Returns a list of all valid moves from the current position in
+        # algebraic notation
 
-        """ TODO Start with uci notation since it is easier to parse, then
-        translate to algebriac """
+        # TODO Start with uci notation since it is easier to parse, then
+        # translate to algebriac
 
-        """ Theory of operation:
+        # Theory of operation:
 
-            I haven't planned this out fully yet, but here is what I have so
-            far
+            # I haven't planned this out fully yet, but here is what I have so
+            # far
 
-            The plan will be to search for every possible move by looking for
-            every piece the current player controls and then using a lookup
-            table for non 'ray' pieces to look for all their potention moves.
+            # The plan will be to search for every possible move by looking for
+            # every piece the current player controls and then using a lookup
+            # table for non 'ray' pieces to look for all their potention moves.
 
-            Steps
+            # Steps
 
-            1. Find the location of every piece the current player controls.
+            # 1. Find the location of every piece the current player controls.
 
-            2. TODO If the piece is a 'ray piece', i.e. Bishop, Rook, Queen
+            # 2. TODO If the piece is a 'ray piece', i.e. Bishop, Rook, Queen
 
-            3. Else if it is any other piece, use a lookup table to find all
-            potential moves
-        """
+            # 3. Else if it is any other piece, use a lookup table to find all
+            # potential moves
+        #
 
-        """ Stores the index of each of the current players pieces. """
+        # Stores the index of each of the current players pieces.
         cur_pieces_list = []
 
-        """ List of legal moves. """
+        # List of legal moves.
         moves = []
 
-        """ Find the location of each of the current players pieces. """
+        # Find the location of each of the current players pieces.
         for i in range(len(self.board) - 1):
             if self.cur_player_white and self.board[i] in [1, 2, 3, 4, 5, 6]:
                 cur_pieces_list.append(i)
@@ -195,7 +189,7 @@ class Board():
                 if self.board[i] in [-1, -2, -3, -4, -5, -6]:
                     cur_pieces_list.append(i)
 
-        """ Check all possible moves for each piece """
+        # Check all possible moves for each piece
         for i in cur_pieces_list:
 
             candidate_moves = []
@@ -206,19 +200,19 @@ class Board():
             else:
                 enemy_pieces_lookup = [1, 2, 3, 4, 5, 6]
 
-            """ Temporarily ignore rooks, bishops and queens """
-            """ TODO Write code for "ray" pieces """
+            # Temporarily ignore rooks, bishops and queens
+            # TODO Write code for "ray" pieces
             if self.board[i] in [3, 4, 5, -3, -4, -5]:
                 pass
 
             elif self.board[i] == 1:
-                """ Currently pawns are the only implemented piece """
+                # Currently pawns are the only implemented piece
                 candidate_moves += self.get_legal_pawn_moves(
                     i, enemy_pieces_lookup)
             else:
                 pass
 
-            """ Convert moves to uci """
+            # Convert moves to uci
             for j in range(len(candidate_moves)):
                 moves.append(
                     Board.get_algebraic_from_index(i) +
@@ -230,9 +224,9 @@ class Board():
     def get_legal_pawn_moves(self, i, enemy_pieces_lookup):
         candidate_moves = []
 
-        """ TODO en passant """
+        # TODO en passant
 
-        """ TODO Document offsets """
+        # TODO Document offsets
 
         if self.cur_player_white:
             pawn_move_offset = i + 12
@@ -245,7 +239,7 @@ class Board():
 
         location = pawn_move_offset
 
-        """ The space is unnocupied """
+        # The space is unnocupied
         if self.board[location] == 0:
             candidate_moves.append(location)
 
@@ -269,14 +263,14 @@ class Board():
         return candidate_moves
 
     def get_algebraic_from_index(index):
-        """ Convert from index to algebraic location """
-        """ i = 26 -> a1, i = 38 -> a2 """
+        # Convert from index to algebraic location
+        # i = 26 -> a1, i = 38 -> a2
 
         algebraic = ""
 
-        """ a: 26, 38, 50, 62, 74, 86, 98, 110 """
+        # a: 26, 38, 50, 62, 74, 86, 98, 110
 
-        """ From location """
+        # From location
         if index in [26, 38, 50, 62, 74, 86, 98, 110]:
             algebraic += "a" + str(((index - 2) // 12) - 1)
 
@@ -304,20 +298,20 @@ class Board():
         return algebraic
 
     def print_board(self):
-        """ Print in reverse order, (black in back) """
+        # Print in reverse order, (black in back)
 
         output_string = ''
 
-        """ Used to split the line after each 8th piece """
-        """ TODO Board prints with white in back, which isn't wrong but white
-        looks better in front """
+        # Used to split the line after each 8th piece
+        # TODO Board prints with white in back, which isn't wrong but white
+        # looks better in front
         file_count = 0
         for i in range(9, 1, -1):
             for j in range(2, 10):
                 file_count += 1
 
-                """ Use lookup table to translate pieces to strings. Then add
-                the piece and a space to the output string. """
+                # Use lookup table to translate pieces to strings. Then add
+                # the piece and a space to the output string.
 
                 output_string += Board.__piece_chars[
                     self.board[i * 12 + j]] + " "
