@@ -19,7 +19,8 @@ class Board():
 
     # black is negative eg -1 is a black pawn
 
-    # Visualization of the board (backwards)
+    # Visualization of the board. This is backwards because of the way the
+    # array is arranged.
 
     # [X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X,
@@ -326,10 +327,16 @@ class Board():
         print(output_string)
 
     def print_board_layout():
+        """ DEPRECATED use get_board_layout() """
+        print(get_board_layout)
+
+    def get_board_layout():
+        """ Returns a string with a visual representation of how the board is
+        mapped to an array. """
         output_string = ""
         for i in range(12):
             for j in range(12):
                 output_string += str((i * 12) + j) + "\t"
             output_string += "\n"
 
-        print(output_string)
+        return output_string
