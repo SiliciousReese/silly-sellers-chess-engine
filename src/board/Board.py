@@ -170,7 +170,12 @@ class Board():
 
             for k in range(8):
                 start_index = starting_indices[i]
-                self.board[start_index + k] = Board.__piece_chars.index(tmp[k])
+                piece = Board.__piece_chars.index(tmp[k])
+                # Use negative values for black. The "X" is the last, non-black
+                # piece in the array.
+                if piece > Board.__piece_chars.index("X"):
+                    piece -= 14
+                self.board[start_index + k] = piece
 
         return ranks
 
@@ -295,8 +300,13 @@ class Board():
             candidate_moves.append(location)
 
         # Captures
+        # TODO Does not find captures? (tested with
+        # fen "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3")
         for j in range(len(pawn_captures_offsets)):
             location = pawn_captures_offsets[j]
+            # TODO Remove debugging output
+            # print("looping with j = " + str(j) +
+            #       ", location = " + str(location) + ", piece at location " + str(self.board[location]) + str(self.board))
             if self.board[location] in enemy_pieces_lookup:
                 candidate_moves.append(location)
             # TODO Check for en passant here
@@ -309,8 +319,13 @@ class Board():
                 (self.cur_player_white and i not in pawn_double_lookup[1])):
             location = pawn_move_double_offset
 
+            # TODO Rewrite if condition for readability
             if self.board[location] == 0:
-                candidate_moves.append(location)
+                if ((self.cur_player_white and (self.board[location - 12]
+                                                == 0))
+                    or (not self.cur_player_white
+                        and self.board[location + 12] == 0)):
+                    candidate_moves.append(location)
 
         return candidate_moves
 
@@ -351,12 +366,13 @@ class Board():
 
     def get_board_layout():
         """ Returns a string with a visual representation of how the board is
-        mapped to an array. """
+        mapped to an array. The Outer section of the board, the part used for
+        out of bounds detection, is not shown. """
 
         output_string = ""
 
-        for i in range(12):
-            for j in range(12):
+        for i in range(9, 1, -1):
+            for j in range(9, 1, -1):
                 output_string += str((i * 12) + j) + "\t"
             output_string += "\n"
 

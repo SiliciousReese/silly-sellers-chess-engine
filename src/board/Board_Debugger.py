@@ -27,9 +27,14 @@ if __name__ == '__main__':
 
             # [5] A line in the french
             "rnbqk2r/1ppnb2p/p3p1pQ/3pPpB1/3P3P/2N5/PPP2PP1/R3KBNR "
-            "b KQkq - 1 9"]
+            "b KQkq - 1 9",
+
+            # [6] The French Defense
+            "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"]
 
     # board = Board()
+    str(Board())
+
     board = Board(fens[0])
     print(board)
     print(board.get_all_moves())
@@ -41,6 +46,7 @@ if __name__ == '__main__':
     print()
     for fen in fens:
         board.read_position(fen)
+        print(Board.get_board_layout())
         print(board)
         print(board.get_all_moves())
         print()
