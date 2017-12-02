@@ -326,9 +326,6 @@ class Board():
 
         return algebraic
 
-    def print_board(self):
-        print(str(self))
-
     def get_board_layout():
         """ Returns a string with a visual representation of how the board is
         mapped to an array. """
@@ -341,7 +338,3 @@ class Board():
             output_string += "\n"
 
         return output_string
-
-    def print_board_layout(self):
-        """ DEPRECATED use get_board_layout() """
-        print(Board.get_board_layout())
