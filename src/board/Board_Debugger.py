@@ -35,20 +35,12 @@ if __name__ == '__main__':
     print(board.get_all_moves())
     print()
 
-    print("trying fen 3")
-    board.read_position(fens[2])
-    print(board)
-    print(board.get_all_moves())
+    # Test fen processing and board drawing and move generation
     print()
-
-    print("trying fen 4")
-    board.read_position(fens[3])
-    print(board)
-    print(board.get_all_moves())
+    print("# Testing fens 0 through " + str(len(fens) - 1) + " #")
     print()
-
-    # print("printing result of fen1")
-    # print(board.read_position(fen1))
-    # print()
-
-    # print(board.get_all_moves())
+    for fen in fens:
+        board.read_position(fen)
+        print(board)
+        print(board.get_all_moves())
+        print()
