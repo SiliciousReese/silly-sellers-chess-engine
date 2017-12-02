@@ -208,7 +208,17 @@ class Board():
         # knights and kings. Then the program seperately checks the validity of
         # each of moving to each of these locations.
         #
-        # For example: TODO Knight example since it is cleaner than pawn code
+        # For example: If it's white's turn then find the location of every
+        # white knight. For each white knight use the offset table (see source
+        # code below for example values) to get the location of every potential
+        # destination square for the knight. Do validity checks, ie is the
+        # destination square empty or contains an enemy piece, for each
+        # potential destination square.
+        #
+        # If the square is off the board nothing special happens, as there will
+        # be an "X" at the location and since that isn't an empty square or an
+        # opponent piece, the algorithm will just skip over it. That is the
+        # benefit of using a 12 by 12 board.
 
         # Stores the index of each of the current players pieces.
         cur_pieces_list = []
@@ -237,10 +247,10 @@ class Board():
             else:
                 enemy_pieces_lookup = [1, 2, 3, 4, 5, 6]
 
-            # Temporarily ignore rooks, bishops and queens
-            # TODO Write code for "ray" pieces
-            if piece in [3, 4, 5, -3, -4, -5]:
-                pass
+            # Bishop, Rook and queen movement
+            if piece in ["white_bishop", "black_bishop", "white_rook",
+                         "black_rook", "white_queen", "black_queen"]:
+                get_ray_piece_moves(self, i, enemy_pieces_lookup)
 
             # Pawn movement
             elif piece == "white_pawn" or piece == "black_pawn":
@@ -256,7 +266,8 @@ class Board():
             elif piece == "white_king" or piece == "black_king":
                 candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
-            # Convert moves to uci
+            # Convert moves to uci (similar to algebriac notation, but uses
+            # source location instead of source piece)
             for j in range(len(candidate_moves)):
                 moves.append(
                     Board.get_algebraic_from_index(i) +
@@ -377,6 +388,38 @@ class Board():
                 candidate_moves.append(location)
 
         return candidate_moves
+
+    def get_ray_piece_moves(self, i, enemy_pieces_lookup):
+        # These tests will be different from the other pieces. Instead of
+        # checking a set of specific locations, I will test a range of
+        # locations and stop checking after the range is blocked or the range
+        # goes off the edge of the board.
+        candidate_moves = []
+
+        piece = board[i]
+
+        valid_locations_lookup = enemy_pieces_lookup + [0]
+
+        if piece == "white_bishop" or piece == "black_bishop":
+            candidate_moves.append(get_bishop_moves(self, i,
+                                                    valid_locations_lookup))
+        elif piece == "white_rook" or piece == "black_rook":
+            candidate_moves.append(get_rook_moves(self, i,
+                                                  valid_locations_lookup))
+        elif piece == "white_queen" or piece == "black_queen":
+            # Queen can be treated like a combination of a bishop and a rook
+            candidate_moves.append(get_bishop_moves(self, i,
+                                                    valid_locations_lookup))
+            candidate_moves.append(get_rook_moves(self, i,
+                                                  valid_locations_lookup))
+
+    def get_bishop_moves(self, i, valid_locations_lookup):
+        # TODO Get bishop moves
+        return []
+
+    def get_rook_moves(self, i, valid_locations_lookup):
+        # TODO Get rook moves
+        return []
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location
