@@ -151,7 +151,7 @@ class Board():
 
             # Solved through trial and error. I don't actually know how this
             # works
-            # TODO Document and or rewrite
+            # TODO Document and/or rewrite
             digit_lookup = ['1', '2', '3', '4', '5', '6', '7', '8']
             num_dots_lookup = ['.', '..', '...', '....', '.....', '......',
                                '.......', '........']
@@ -250,10 +250,11 @@ class Board():
 
             # Knight movement
             elif piece == "white_knight" or piece == "black_knight":
-                pass
+                candidate_moves += self.get_knight_moves(i,
+                                                         enemy_pieces_lookup)
 
             elif piece == "white_king" or piece == "black_king":
-                pass
+                candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
             # Convert moves to uci
             for j in range(len(candidate_moves)):
@@ -268,6 +269,17 @@ class Board():
 
     def get_legal_pawn_moves(self, i, enemy_pieces_lookup):
         candidate_moves = []
+
+        # Pawn moves are surprisingly complicated compared to the rest of the
+        # pieces.
+        #
+        # 1. The direction a pawn can move depends on it's color
+        #
+        # 2. A pawn can move twice only on it's first move
+        #
+        # 3. A pawn can capture en passant
+        #
+        # 4. A pawn captures in a diffent way than it moves
 
         # Pawn offset
         #
@@ -300,13 +312,8 @@ class Board():
             candidate_moves.append(location)
 
         # Captures
-        # TODO Does not find captures? (tested with
-        # fen "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3")
         for j in range(len(pawn_captures_offsets)):
             location = pawn_captures_offsets[j]
-            # TODO Remove debugging output
-            # print("looping with j = " + str(j) +
-            #       ", location = " + str(location) + ", piece at location " + str(self.board[location]) + str(self.board))
             if self.board[location] in enemy_pieces_lookup:
                 candidate_moves.append(location)
             # TODO Check for en passant here
@@ -328,6 +335,30 @@ class Board():
                     candidate_moves.append(location)
 
         return candidate_moves
+
+    def get_knight_moves(self, i, enemy_pieces_lookup):
+        candidate_moves = []
+
+        # Knight offsets
+        #
+        # The knight has less complicated movement than the pawn. Every offset
+        # needs the exact same checks done for validity.
+
+        knight_offsets = [i - (12 * 2) - 1, i - (12 * 2) + 1, i - 12 - 1, i -
+                          12 + 1, i + 12 - 1, i + 12 + 1, i + 24 - 1, i + 24 +
+                          1]
+
+        valid_locations = enemy_pieces_lookup + [0]
+
+        # Moves and captures
+        for location in knight_offsets:
+            if self.board[location] in valid_locations:
+                candidate_moves.append(location)
+
+        return candidate_moves
+
+    def get_king_moves(self, i, enemy_pieces_lookup):
+        return []
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location

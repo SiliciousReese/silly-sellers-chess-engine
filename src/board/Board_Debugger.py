@@ -19,7 +19,7 @@ if __name__ == '__main__':
             # [2] King and knight drawn ending
             "k7/8/8/4N3/8/8/8/3K4 b - - 13 56",
 
-            # [3] An unnamed sicilian variation (1. e4 c5 2. e5 d5)
+            # [3] An unnamed sicilian variation (1. e4 c5 2. e5? d5?)
             "rnbqkbnr/pp2pppp/8/2ppP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3",
 
             # [4] A line in the sicilian
@@ -29,24 +29,55 @@ if __name__ == '__main__':
             "rnbqk2r/1ppnb2p/p3p1pQ/3pPpB1/3P3P/2N5/PPP2PP1/R3KBNR "
             "b KQkq - 1 9",
 
-            # [6] The French Defense
+            # [6] The French defense
             "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"]
 
-    # board = Board()
-    str(Board())
+    valid_moves_from_fens = [
+        # [0]
+        ['a2a3', 'a2a4', 'b1a3', 'b1c3', 'b2b3', 'b2b4', 'c2c3', 'c2c4',
+         'd2d3', 'd2d4', 'e2e3', 'e2e4', 'f2f3', 'f2f4', 'g1f3', 'g1h3',
+         'g2g3', 'g2g4', 'h2h3', 'h2h4'],
+        # [1]
+        None,
+        # [2]
+        None,
+        # [3]
+        None,
+        # [4]
+        None,
+        # [5]
+        None,
+        # [6]
+        None,
+        # [7]
+        None]
 
-    board = Board(fens[0])
-    print(board)
-    print(board.get_all_moves())
-    print()
+    board = Board()
+    str(board)
 
     # Test fen processing and board drawing and move generation
     print()
     print("# Testing fens 0 through " + str(len(fens) - 1) + " #")
     print()
-    for fen in fens:
-        board.read_position(fen)
-        print(Board.get_board_layout())
-        print(board)
-        print(board.get_all_moves())
+    for i in range(len(fens)):
+        board.read_position(fens[i])
+        # print(Board.get_board_layout())
+
+        print("# Testing fen string number: ", str(i), " #")
+
+        if valid_moves_from_fens[i] is not None:
+            moves = sorted(board.get_all_moves())
+            correct_moves = valid_moves_from_fens[i]
+            if moves == correct_moves:
+                print("# PASSED move generation #")
+            else:
+                print("# FAILED move generation #")
+                print("Correct response:", correct_moves)
+                print("Actual response:", moves)
+            print(board)
+        else:
+            print("# NOT TESTED: correct moves not known #")
+            print(board)
+            print(board.get_all_moves())
+        print()
         print()
