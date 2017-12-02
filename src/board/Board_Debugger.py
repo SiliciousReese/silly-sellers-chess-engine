@@ -31,25 +31,24 @@ if __name__ == '__main__':
 
     # board = Board()
     board = Board(fens[0])
-    board.print_board()
+    print(board)
     print(board.get_all_moves())
+    print()
 
     print("trying fen 3")
     board.read_position(fens[2])
-    board.print_board()
+    print(board)
     print(board.get_all_moves())
     print()
 
     print("trying fen 4")
     board.read_position(fens[3])
-    board.print_board()
+    print(board)
     print(board.get_all_moves())
     print()
 
     # print("printing result of fen1")
     # print(board.read_position(fen1))
     # print()
-
-    # board.print_board()
 
     # print(board.get_all_moves())

@@ -75,6 +75,31 @@ class Board():
         # False.
         self.cur_player_white = True
 
+    def __str__(self):
+        # Print in reverse order, (black in back)
+
+        output_string = ''
+
+        # Used to split the line after each 8th piece
+        # TODO Board prints with white in back, which isn't wrong but white
+        # looks better in front
+        file_count = 0
+        for i in range(9, 1, -1):
+            for j in range(2, 10):
+                file_count += 1
+
+                # Use lookup table to translate pieces to strings. Then add
+                # the piece and a space to the output string.
+
+                output_string += Board.__piece_chars[
+                    self.board[i * 12 + j]] + " "
+
+                if file_count == 8:
+                    output_string += "\n"
+                    file_count = 0
+
+        return output_string
+
     def read_position(self, fen):
         """
         1. Process Board position:
@@ -302,41 +327,21 @@ class Board():
         return algebraic
 
     def print_board(self):
-        # Print in reverse order, (black in back)
-
-        output_string = ''
-
-        # Used to split the line after each 8th piece
-        # TODO Board prints with white in back, which isn't wrong but white
-        # looks better in front
-        file_count = 0
-        for i in range(9, 1, -1):
-            for j in range(2, 10):
-                file_count += 1
-
-                # Use lookup table to translate pieces to strings. Then add
-                # the piece and a space to the output string.
-
-                output_string += Board.__piece_chars[
-                    self.board[i * 12 + j]] + " "
-
-                if file_count == 8:
-                    output_string += "\n"
-                    file_count = 0
-
-        print(output_string)
-
-    def print_board_layout():
-        """ DEPRECATED use get_board_layout() """
-        print(get_board_layout)
+        print(str(self))
 
     def get_board_layout():
         """ Returns a string with a visual representation of how the board is
         mapped to an array. """
+
         output_string = ""
+
         for i in range(12):
             for j in range(12):
                 output_string += str((i * 12) + j) + "\t"
             output_string += "\n"
 
         return output_string
+
+    def print_board_layout(self):
+        """ DEPRECATED use get_board_layout() """
+        print(Board.get_board_layout())
