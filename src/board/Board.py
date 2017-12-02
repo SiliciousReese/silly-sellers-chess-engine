@@ -6,8 +6,6 @@ import re
 class Board():
     """ Uses a 12 by 12 array to store the board """
 
-    __board_size = 12
-
     # Start position
 
     # Capital is white, underscore is empty
@@ -50,6 +48,8 @@ class Board():
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7,
                      +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7, +7]
 
+    __board_size = 12
+
     # Used to convert from board to displayable pieces. Currently the X in the
     # middle can be used to display the boundary board. Note that the board
     # uses negative numbers for black. This works well with python which allows
@@ -66,6 +66,9 @@ class Board():
 
         if fen is not None:
             self.read_position(fen)
+
+        self.castle_available = [True, True, True, True]
+        self.en_passant_target = ""
 
         # Determine which  player's turn it is. White is True and Black is
         # False.
