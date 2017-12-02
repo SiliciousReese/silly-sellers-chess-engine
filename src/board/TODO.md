@@ -8,5 +8,3 @@
 
 * Code is hacky and not well thought out. Needs to be restructured and
   documented
-
-* Output to fen

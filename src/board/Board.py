@@ -21,7 +21,7 @@ class Board():
 
     # Visualization of the board. This is backwards because of the way the
     # array is arranged.
-
+    #
     # [X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, R, N, B, K, Q, B, N, R, X, X,
@@ -59,6 +59,11 @@ class Board():
     __piece_chars = [".", "P", "N", "B", "R", "Q", "K", "X", "k", "q", "r",
                      "b", "n", "p"]
 
+    __pieces_lookup = ["empty", "white_pawn", "white_knight", "white_bishop",
+                       "white_rook", "white_queen", "white_king", "black_king",
+                       "black_queen", "black_rook", "black_bishop",
+                       "black_knight", "black_pawn"]
+
     def __init__(self, fen=None):
         """ Sets up initial bored configuration """
 
@@ -76,13 +81,11 @@ class Board():
         self.cur_player_white = True
 
     def __str__(self):
-        # Print in reverse order, (black in back)
+        """ Print in reverse order, (black in back) """
 
         output_string = ''
 
         # Used to split the line after each 8th piece
-        # TODO Board prints with white in back, which isn't wrong but white
-        # looks better in front
         file_count = 0
         for i in range(9, 1, -1):
             for j in range(2, 10):
@@ -117,8 +120,6 @@ class Board():
 
         2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
         """
-
-        # TODO Read position from fen string
 
         num_spaces = fen.count(" ")
         num_slashes = fen.count("/")
@@ -178,30 +179,31 @@ class Board():
         pass
 
     def get_all_moves(self):
-        # Returns a list of all valid moves from the current position in
-        # algebraic notation
-
-        # TODO Start with uci notation since it is easier to parse, then
-        # translate to algebriac
+        """ Returns a list of all valid moves from the current position in
+        algebraic notation """
 
         # Theory of operation:
-
-            # I haven't planned this out fully yet, but here is what I have so
-            # far
-
-            # The plan will be to search for every possible move by looking for
-            # every piece the current player controls and then using a lookup
-            # table for non 'ray' pieces to look for all their potention moves.
-
-            # Steps
-
-            # 1. Find the location of every piece the current player controls.
-
-            # 2. TODO If the piece is a 'ray piece', i.e. Bishop, Rook, Queen
-
-            # 3. Else if it is any other piece, use a lookup table to find all
-            # potential moves
         #
+        # The plan will be to search for every possible move by looking for
+        # every piece the current player controls and then using a lookup table
+        # for non 'ray' pieces to look for all their potention moves.
+        #
+        # Steps
+        #
+        # 1. Find the location of every piece the current player controls.
+        #
+        # 2. TODO If the piece is a 'ray piece', i.e. Bishop, Rook, Queen
+        #
+        # 3. Else if it is any other piece, use a lookup table to find all
+        # potential moves
+        #
+        # 3.1 Offset Arrays: For many of the moves I used array containing
+        # position offsets. These work by storing the relative location in the
+        # array for all of the possible moves of the following pieces: pawns,
+        # knights and kings. Then the program seperately checks the validity of
+        # each of moving to each of these locations.
+        #
+        # For example: TODO Knight example since it is cleaner than pawn code
 
         # Stores the index of each of the current players pieces.
         cur_pieces_list = []
@@ -220,6 +222,7 @@ class Board():
 
         # Check all possible moves for each piece
         for i in cur_pieces_list:
+            piece = self.__pieces_lookup[self.board[i]]
 
             candidate_moves = []
 
@@ -231,14 +234,20 @@ class Board():
 
             # Temporarily ignore rooks, bishops and queens
             # TODO Write code for "ray" pieces
-            if self.board[i] in [3, 4, 5, -3, -4, -5]:
+            if piece in [3, 4, 5, -3, -4, -5]:
                 pass
 
-            elif self.board[i] == 1:
+            # Pawn movement
+            elif piece == "white_pawn" or piece == "black_pawn":
                 # Currently pawns are the only implemented piece
                 candidate_moves += self.get_legal_pawn_moves(
                     i, enemy_pieces_lookup)
-            else:
+
+            # Knight movement
+            elif piece == "white_knight" or piece == "black_knight":
+                pass
+
+            elif piece == "white_king" or piece == "black_king":
                 pass
 
             # Convert moves to uci
@@ -248,14 +257,25 @@ class Board():
                     Board.get_algebraic_from_index(
                         candidate_moves[j]))
 
+        # TODO Check if king left in check
+
         return moves
 
     def get_legal_pawn_moves(self, i, enemy_pieces_lookup):
         candidate_moves = []
 
-        # TODO en passant
-
-        # TODO Document offsets
+        # Pawn offset
+        #
+        # There are four potential moves for a pawn:
+        #
+        # 1. 1 forward (unless blocked
+        # or pinned),
+        #
+        # 2. 2 forward (if not blocked or pinned, and if starting on
+        # initial square)
+        #
+        # 3. capture on adjacent diagonal squares (if not pinned and an
+        # oppenents piece is on the square, or if en passant is allowed).
 
         if self.cur_player_white:
             pawn_move_offset = i + 12
@@ -266,19 +286,22 @@ class Board():
             pawn_captures_offsets = [i - 11, i - 13]
             pawn_move_double_offset = i - 24
 
+        # Single move
+
         location = pawn_move_offset
 
         # The space is unnocupied
         if self.board[location] == 0:
             candidate_moves.append(location)
 
+        # Captures
         for j in range(len(pawn_captures_offsets)):
-
             location = pawn_captures_offsets[j]
-
             if self.board[location] in enemy_pieces_lookup:
                 candidate_moves.append(location)
+            # TODO Check for en passant here
 
+        # Move double
         pawn_double_lookup = [[38, 39, 40, 41, 42, 43, 44, 45],
                               [98, 99, 100, 101, 102, 103, 104, 105]]
 
@@ -292,7 +315,7 @@ class Board():
         return candidate_moves
 
     def get_algebraic_from_index(index):
-        # Convert from index to algebraic location
+        # Convert from a board location array index to algebraic board location
         # i = 26 -> a1, i = 38 -> a2
 
         algebraic = ""
