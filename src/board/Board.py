@@ -71,15 +71,15 @@ class Board():
         # The array to store the board
         self.board = list(Board.__start_board)
 
-        if fen is not None:
-            self.read_position(fen)
+        # Determine which player's turn it is. White is True and Black is
+        # False.
+        self.cur_player_white = True
 
         self.castle_available = [True, True, True, True]
         self.en_passant_target = ""
 
-        # Determine which  player's turn it is. White is True and Black is
-        # False.
-        self.cur_player_white = True
+        if fen is not None:
+            self.read_position(fen)
 
     def __str__(self):
         """ Return an ascii-art representation of the current board. """
@@ -128,7 +128,13 @@ class Board():
 
         # Simple pattern to match all the valid characters until the first
         # space in an fen string
-        fen_board = re.search('^([rkqrbnpKQRBNP/12345678])+', fen).group(0)
+        fen_board = re.search("^([rkqrbnpKQRBNP/12345678])+", fen).group(0)
+
+        # Match either " w" or " b". Then only keep the second letter of the
+        # first matched string. Then use the match to assign the current
+        # player.
+        fen_cur_player = re.search(" [wb]", fen).group(0)[1]
+        self.cur_player_white = (fen_cur_player == "w")
 
         # Create a list containing each rank
         prev_index = -1
