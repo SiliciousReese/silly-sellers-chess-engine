@@ -147,6 +147,9 @@ class Board():
             starting_indices = [110, 98, 86, 74, 62, 50, 38, 26]
 
             # Convert empty squares to dots.
+
+            # Pseudo-code
+            #
             # for each letter l:
             #     if l in lookup_table:
             #        location(l).replace_with(dot_lookup[l - 1])
@@ -585,18 +588,31 @@ class Board():
 
         return candidate_moves
 
-    def make_move(from_algebraic_location, to_algebraic_location):
-        """ Make a move on the board. """
+    def make_move(self, from_algebraic_location, to_algebraic_location):
+        """ Make a move on the board. Test whether the move is valid, perhaps
+        by testing if get_all_moves returns the given move, before calling
+        function. If the move is invalid, a runtime exception will be raised.
+        """
+
+        move_from_index = move_to_index = piece = 0
+
+        move_algebraic = from_algebraic_location + to_algebraic_location
 
         # Test if move is valid
-        #
+        valid_moves = self.get_all_moves()
+
+        if move not in valid_moves:
+            raise RuntimeError("Move not valid")
+
         # Convert from algebraic to board indices
-        #
+
+        move_from_index = get_index_from_algebraic(from_algebraic_location)
+        move_to_index = get_index_from_algebraic(to_algebraic_location)
+
         # remove piece at old location
-        #
-        # place piece at new location
-        #
-        pass
+        piece = self.board[move_from_index]
+        self.board[move_from_index] = move_from_index
+        self.board[move_to_index] = piece
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location
