@@ -60,9 +60,10 @@ class Board():
                      "b", "n", "p"]
 
     __pieces_lookup = ["empty", "white_pawn", "white_knight", "white_bishop",
-                       "white_rook", "white_queen", "out_of_bounds",
-                       "white_king", "black_king", "black_queen", "black_rook",
-                       "black_bishop", "black_knight", "black_pawn"]
+                       "white_rook", "white_queen", "white_king",
+                       "out_of_bounds", "black_king", "black_queen",
+                       "black_rook", "black_bishop", "black_knight",
+                       "black_pawn"]
 
     def __init__(self, fen=None):
         """ Sets up initial bored configuration """
@@ -371,7 +372,7 @@ class Board():
                               [98, 99, 100, 101, 102, 103, 104, 105]]
 
         if ((self.cur_player_white and i in pawn_double_lookup[0]) or
-                (self.cur_player_white and i not in pawn_double_lookup[1])):
+                (not self.cur_player_white and i in pawn_double_lookup[1])):
             location = pawn_move_double_offset
 
             # TODO Rewrite if condition for readability

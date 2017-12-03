@@ -16,6 +16,11 @@ Proper testing framework
 * Currently a python script is used and edited by hand every time the code is
   changed.
 
+## Code format ##
+
+There are a few sections that have inconsistent and undocumented formatting and
+conventions
+
 # What is implemented? #
 
 All legal moves can be generated. This appears to be implemented correctly, but
