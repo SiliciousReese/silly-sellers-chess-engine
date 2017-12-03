@@ -399,9 +399,8 @@ class Board():
         #
         # Example: "k7/8/8/4N3/8/8/8/3K4 b - - 13 56"
 
-        knight_offsets = [i - (12 * 2) - 1, i - (12 * 2) + 1, i - 12 - 1, i -
-                          12 + 1, i + 12 - 1, i + 12 + 1, i + 24 - 1, i + 24 +
-                          1]
+        knight_offsets = [i - 24 - 1, i - 24 + 1, i - 12 - 2, i - 12 + 2, i +
+                          12 - 2, i + 12 + 2, i + 24 - 1, i + 24 + 1]
 
         valid_locations = enemy_pieces_lookup + [0]
 

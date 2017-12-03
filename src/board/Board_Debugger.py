@@ -87,3 +87,5 @@ if __name__ == '__main__':
             print(sorted(board.get_all_moves()))
         print()
         print()
+
+    # TODO Test algebraic conversion
