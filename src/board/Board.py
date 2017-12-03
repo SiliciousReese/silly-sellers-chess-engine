@@ -81,7 +81,7 @@ class Board():
         self.cur_player_white = True
 
     def __str__(self):
-        """ Print in reverse order, (black in back) """
+        """ Return an ascii-art representation of the current board. """
 
         output_string = ''
 
@@ -104,22 +104,23 @@ class Board():
         return output_string
 
     def read_position(self, fen):
-        """
-        1. Process Board position:
-            Each row is seperated by a /, the finaly (8th) row is ended with a
-            space.
+        """ Import a board position from an fen string. """
 
-            For each of the 8 rows:
-                Process each letter individually
-                4 = 4 empty spaces
+        # 1. Process Board position:
+        #     Each row is seperated by a /, the finaly (8th) row is ended with
+        #     a space.
 
-        sample:
+        #     For each of the 8 rows:
+        #         Process each letter individually
+        #         4 = 4 empty spaces
 
-        Starting position:
-        rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+        # sample:
 
-        2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
-        """
+        # Starting position:
+        # rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+        # 2: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+        # """
 
         num_spaces = fen.count(" ")
         num_slashes = fen.count("/")
@@ -245,6 +246,11 @@ class Board():
         moves = []
 
         # Find the location of each of the current players pieces.
+        # TODO Subtracting one was unintentional here. This will make it skip
+        # the last element of the array. However, this is not bad because that
+        # section of the array is of the board, so there is no reason to check
+        # there. Therefor, this should be changed to avoid checking any
+        # off-board location.
         for i in range(len(self.board) - 1):
             if self.cur_player_white and self.board[i] in [1, 2, 3, 4, 5, 6]:
                 cur_pieces_list.append(i)
@@ -259,18 +265,17 @@ class Board():
 
             candidate_moves = []
 
-            enemy_pieces_lookup = []
             if self.cur_player_white:
                 enemy_pieces_lookup = [-1, -2, -3, -4, -5, -6]
             else:
                 enemy_pieces_lookup = [1, 2, 3, 4, 5, 6]
 
             # Bishop, Rook and queen movement
-            if piece in ["white_bishop", "black_bishop", "white_rook",
-                         "black_rook", "white_queen", "black_queen"]:
-                candidate_moves += (self.
-                                    get_ray_piece_moves(i,
-                                                        enemy_pieces_lookup))
+            if piece in ["white_bishop", "black_bishop",
+                         "white_rook", "black_rook",
+                         "white_queen", "black_queen"]:
+                candidate_moves += (
+                    self.get_ray_piece_moves(i, enemy_pieces_lookup))
 
             # Pawn movement
             elif piece == "white_pawn" or piece == "black_pawn":
@@ -280,19 +285,18 @@ class Board():
 
             # Knight movement
             elif piece == "white_knight" or piece == "black_knight":
-                candidate_moves += self.get_knight_moves(i,
-                                                         enemy_pieces_lookup)
+                candidate_moves += self. \
+                    get_knight_moves(i, enemy_pieces_lookup)
 
+            # King movement
             elif piece == "white_king" or piece == "black_king":
                 candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
             # Convert moves to uci (similar to algebriac notation, but uses
             # source location instead of source piece)
-            for j in range(len(candidate_moves)):
-                moves.append(
-                    Board.get_algebraic_from_index(i) +
-                    Board.get_algebraic_from_index(
-                        candidate_moves[j]))
+            for j in candidate_moves:
+                moves.append(Board.get_algebraic_from_index(i) +
+                             Board.get_algebraic_from_index(j))
 
         # TODO Check if king left in check
 
@@ -454,13 +458,19 @@ class Board():
         valid_locations_lookup = enemy_pieces_lookup + [0]
 
         if piece == "white_bishop" or piece == "black_bishop":
-            candidate_moves += self.get_bishop_moves(i, valid_locations_lookup)
+            candidate_moves = self.get_bishop_moves(i, valid_locations_lookup)
         elif piece == "white_rook" or piece == "black_rook":
-            candidate_moves += self.get_rook_moves(i, valid_locations_lookup)
+            candidate_moves = self.get_rook_moves(i, valid_locations_lookup)
         elif piece == "white_queen" or piece == "black_queen":
             # Queen can be treated like a combination of a bishop and a rook
-            candidate_moves += self.get_bishop_moves(i, valid_locations_lookup)
-            candidate_moves += self.get_rook_moves(i, valid_locations_lookup)
+            # TODO Queen bug: reports non existent move? For instance, with
+            # queen on h5, tries to move from h5 to no square? Missing h5g6?
+            #
+            # Example:
+            # "r2q3r/5k1p/p2p2p1/1p2n1bQ/4P3/2N5/PPP4P/1K1R1B1R w - - 0 19"
+            candidate_moves = self. \
+                get_bishop_moves(i, valid_locations_lookup) \
+                + self.get_rook_moves(i, valid_locations_lookup)
 
         return candidate_moves
 
@@ -481,13 +491,10 @@ class Board():
 
         candidate_moves = []
 
-        bishop_desinations = []
-
-        # First, generate two diagonals for the bishop.
-
         # Simplifies searching for next square.
-        direction_table = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
-        for k in range(4):
+        direction_table = [[-1, -1], [-1, 1],
+                           [+1, -1], [+1, 1]]
+        for k in range(len(direction_table)):
             cur_direction = direction_table[k]
 
             # Used to determine whether to continue a looking for the next
@@ -499,21 +506,15 @@ class Board():
             # on a1, the diagonal would take 8 squares to find the edge of the
             # board.
             for j in range(1, 8):
-                next_piece_location = (i + (j * (12 * cur_direction[0])) + (j * cur_direction[1]))
+                next_piece_location = \
+                    i + (j * (12 * cur_direction[0])) + (j * cur_direction[1])
                 piece = self.board[next_piece_location]
                 location_empty_val = Board.__pieces_lookup.index("empty")
 
                 # Sets end_of_diagonal to False if anything other than an empty
                 # location is encountered. Otherwise sets it to True to end the
                 # loop.
-                end_of_diagonal = (piece != location_empty_val)
-
-                # TODO Remove debug print
-                # print("next_piece_location", next_piece_location,
-                #       # "piece", piece,
-                #       "piece-name", Board.__pieces_lookup[piece],
-                #       "location_empty_val", location_empty_val,
-                #       "end_of_diagonal", end_of_diagonal)
+                end_of_diagonal = piece != location_empty_val
 
                 # If piece in enemy lookup table or square is empty, mark
                 # location as a valid target square. Else mark the square
@@ -544,8 +545,52 @@ class Board():
         # X, X, X, X, X, X, X, X, X, X, X, X
         # X, X, X, X, X, X, X, X, X, X, X, X
 
-        # TODO Get rook moves
-        return []
+        # TODO Rook moves were copy-pasted from bishop moves... because that
+        # couldn't possibly cause any problems...
+
+        candidate_moves = []
+
+        # First, generate two diagonals for the bishop.
+
+        # Simplifies searching for next square.
+        direction_table = [[-1, 0], [1, 0],
+                           [0, -1], [0, 1]]
+        for k in range(4):
+            cur_direction = direction_table[k]
+
+            # Used to determine whether to continue a looking for the next
+            # location. This is changed to true whenever the next location
+            # contains anything other than an empty space.
+            end_of_diagonal = False
+
+            # The longest possible diagonal is the fianchetto. With the bishop
+            # on a1, the diagonal would take 8 squares to find the edge of the
+            # board.
+            for j in range(1, 8):
+                next_piece_location = (i + (j * (12 * cur_direction[0]))
+                                       + (j * cur_direction[1]))
+                piece = self.board[next_piece_location]
+                location_empty_val = Board.__pieces_lookup.index("empty")
+
+                # Sets end_of_diagonal to False if anything other than an empty
+                # location is encountered. Otherwise sets it to True to end the
+                # loop.
+                end_of_diagonal = piece != location_empty_val
+
+                # If piece in enemy lookup table or square is empty, mark
+                # location as a valid target square. Else mark the square
+                # invalid.
+                if piece in valid_locations_lookup:
+                    candidate_moves.append(next_piece_location)
+
+                # Do not continue searching after the first non-empty square is
+                # located. This speeds up the search and prevents any need for
+                # array bounds checking.
+                # TODO add this condition to for loop?
+                if end_of_diagonal:
+                    break
+
+        return candidate_moves
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location
@@ -574,7 +619,7 @@ class Board():
         elif index in [31, 43, 55, 67, 79, 91, 103, 115]:
             algebraic = "f" + str(((index - 7) // 12) - 1)
 
-        elif index in [32, 44, 56, 68, 80, 90, 104, 116]:
+        elif index in [32, 44, 56, 68, 80, 92, 104, 116]:
             algebraic = "g" + str(((index - 8) // 12) - 1)
 
         elif index in [33, 45, 57, 69, 81, 93, 105, 117]:

@@ -30,7 +30,12 @@ if __name__ == '__main__':
             "b KQkq - 1 9",
 
             # [6] The French defense
-            "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3"]
+            "rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3",
+
+            # [7] Sample position with bishop on h1 with empty diagonal. Used
+            # to test bishop movement
+            "1nbqkbnr/r3ppp1/1p1p3p/p1p1P3/7P/6P1/PPPP1P1R/RNBQK1NB w Qk - 2 8"
+           ]
 
     valid_moves_from_fens = [
         # [0]
@@ -50,7 +55,10 @@ if __name__ == '__main__':
         # [6]
         None,
         # [7]
-        None]
+        None,
+        # [8]
+        None
+    ]
 
     board = Board()
     str(board)
