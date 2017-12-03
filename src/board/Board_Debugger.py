@@ -1,8 +1,39 @@
 #!/usr/bin/env python
 
+import random
+
 from Board import Board
 
 # A Standalone program to debug board features
+
+
+def play_game_loop(board):
+    user_input = input("keep playing? y/yes\n")
+    while user_input == "yes" or user_input == "y":
+        user_input = input("enter move or help\n")
+
+        if not (user_input == "help" or user_input == "quit"
+                or user_input == "q"):
+            move = user_input
+            valid_moves = board.get_all_moves()
+
+            while move not in valid_moves:
+                print("invalid move")
+                print("here are some choices", valid_moves_from_fens)
+                move = input()
+                if move == "quit" or move == "q":
+                    quit()
+
+            board.make_move(move[0] + move[1], move[2] + move[3])
+            print(board)
+
+        else:
+            print("Sorry, help not implemented yet. Exiting because the dev \
+                  is lazy")
+            quit()
+
+        user_input = input("keep playing? y/yes\n")
+
 
 if __name__ == '__main__':
 
@@ -98,3 +129,5 @@ if __name__ == '__main__':
     print(board)
     board.make_move("e2", "e4")
     print(board)
+
+    play_game_loop(board)
