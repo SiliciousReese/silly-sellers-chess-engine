@@ -55,10 +55,7 @@ if __name__ == '__main__':
         # [6]
         None,
         # [7]
-        None,
-        # [8]
-        None
-    ]
+        None]
 
     board = Board()
     str(board)

@@ -24,14 +24,14 @@ class Board():
 
     # [X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X,
-    #  X, X, R, N, B, K, Q, B, N, R, X, X,
+    #  X, X, R, N, B, Q, K, B, N, R, X, X,
     #  X, X, P, P, P, P, P, P, P, P, X, X,
     #  X, X, _, _, _, _, _, _, _, _, X, X,
     #  X, X, _, _, _, _, _, _, _, _, X, X,
     #  X, X, _, _, _, _, _, _, _, _, X, X,
     #  X, X, _, _, _, _, _, _, _, _, X, X,
     #  X, X, p, p, p, p, p, p, p, p, X, X,
-    #  X, X, r, n, b, k, q, b, n, r, X, X,
+    #  X, X, r, n, b, Q, k, b, n, r, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X]
 
@@ -292,7 +292,7 @@ class Board():
             elif piece == "white_king" or piece == "black_king":
                 candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
-            # Convert moves to uci (similar to algebriac notation, but uses
+            # Convert moves to uci (similar to algebraic notation, but uses
             # source location instead of source piece)
             for j in candidate_moves:
                 moves.append(Board.get_algebraic_from_index(i) +
@@ -587,7 +587,17 @@ class Board():
 
         return candidate_moves
 
-    def make_move(from_algebriac_location, to_algebriac_location):
+    def make_move(from_algebraic_location, to_algebraic_location):
+        """ Make a move on the board. """
+
+        # Test if move is valid
+        #
+        # Convert from algebraic to board indices
+        #
+        # remove piece at old location
+        #
+        # place piece at new location
+        #
         pass
 
     def get_algebraic_from_index(index):
@@ -624,6 +634,25 @@ class Board():
             algebraic = "h" + str(((index - 9) // 12) - 1)
 
         return algebraic
+
+    def get_index_from_algebraic(algebraic):
+        """ Return the board index of a given algebraic board location. """
+
+        # Some spaces have been removed on purpose to keep the line length
+        # under 80 without damaging readability.
+        algebraic_conversion_table = \
+            ["", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
+             "", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
+             "", "", "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "", "",
+             "", "", "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", "", "",
+             "", "", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", "", "",
+             "", "", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "", "",
+             "", "", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", "", "",
+             "", "", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "", "",
+             "", "", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "", "",
+             "", "", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
+
+        return algebraic_conversion_table.index(algebraic)
 
     def get_board_layout():
         """ Returns a string with a visual representation of how the board is
