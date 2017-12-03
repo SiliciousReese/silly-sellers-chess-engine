@@ -89,3 +89,12 @@ if __name__ == '__main__':
         print()
 
     # TODO Test algebraic conversion
+
+    # Test making move
+
+    board = Board()
+
+    print(board.get_all_moves())
+    print(board)
+    board.make_move("e2", "e4")
+    print(board)

@@ -69,7 +69,7 @@ class Board():
         """ Sets up initial bored configuration """
 
         # The array to store the board
-        self.board = Board.__start_board
+        self.board = list(Board.__start_board)
 
         if fen is not None:
             self.read_position(fen)
@@ -601,17 +601,18 @@ class Board():
         # Test if move is valid
         valid_moves = self.get_all_moves()
 
-        if move not in valid_moves:
+        if move_algebraic not in valid_moves:
             raise RuntimeError("Move not valid")
 
         # Convert from algebraic to board indices
 
-        move_from_index = get_index_from_algebraic(from_algebraic_location)
-        move_to_index = get_index_from_algebraic(to_algebraic_location)
+        move_from_index = Board. \
+            get_index_from_algebraic(from_algebraic_location)
+        move_to_index = Board.get_index_from_algebraic(to_algebraic_location)
 
         # remove piece at old location
         piece = self.board[move_from_index]
-        self.board[move_from_index] = move_from_index
+        self.board[move_from_index] = self.__pieces_lookup.index("empty")
         self.board[move_to_index] = piece
 
     def get_algebraic_from_index(index):
@@ -624,7 +625,7 @@ class Board():
 
         # From location
         if index in [26, 38, 50, 62, 74, 86, 98, 110]:
-            algebraic += "a" + str(((index - 2) // 12) - 1)
+            algebraic = "a" + str(((index - 2) // 12) - 1)
 
         elif index in [27, 39, 51, 63, 75, 87, 99, 111]:
             algebraic = "b" + str(((index - 3) // 12) - 1)
