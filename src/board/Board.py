@@ -21,7 +21,7 @@ class Board():
 
     # Visualization of the board. This is backwards because of the way the
     # array is arranged.
-    #
+
     # [X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, X, X, X, X, X, X, X, X, X, X,
     #  X, X, R, N, B, K, Q, B, N, R, X, X,
@@ -60,9 +60,9 @@ class Board():
                      "b", "n", "p"]
 
     __pieces_lookup = ["empty", "white_pawn", "white_knight", "white_bishop",
-                       "white_rook", "white_queen", "white_king", "black_king",
-                       "black_queen", "black_rook", "black_bishop",
-                       "black_knight", "black_pawn"]
+                       "white_rook", "white_queen", "out_of_bounds",
+                       "white_king", "black_king", "black_queen", "black_rook",
+                       "black_bishop", "black_knight", "black_pawn"]
 
     def __init__(self, fen=None):
         """ Sets up initial bored configuration """
@@ -207,18 +207,36 @@ class Board():
         # array for all of the possible moves of the following pieces: pawns,
         # knights and kings. Then the program seperately checks the validity of
         # each of moving to each of these locations.
-        #
+
         # For example: If it's white's turn then find the location of every
         # white knight. For each white knight use the offset table (see source
         # code below for example values) to get the location of every potential
         # destination square for the knight. Do validity checks, ie is the
         # destination square empty or contains an enemy piece, for each
         # potential destination square.
-        #
+
         # If the square is off the board nothing special happens, as there will
         # be an "X" at the location and since that isn't an empty square or an
         # opponent piece, the algorithm will just skip over it. That is the
         # benefit of using a 12 by 12 board.
+
+        # With the following board, there a 4 squares for the white knight on
+        # g1 to move to, marked with question marks. 5 of these square are off
+        # the board, and 1 of them is the white pawn on e3. The only two valid
+        # moves are f4 and h4.
+
+        # X, X,?X, X,?X, X, X, X, X, X, X, X
+        # X,?X, X, X, X,?X, X, X, X, X, X, X
+        # X, X, R, N, B, K, Q, B, N, R, X, X
+        # X,?X, P, P, P,?P, P, P, P, P, X, X
+        # X, X,?_, _,?_, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, p, p, p, p, p, p, p, p, X, X
+        # X, X, r, n, b, k, q, b, n, r, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
 
         # Stores the index of each of the current players pieces.
         cur_pieces_list = []
@@ -250,7 +268,9 @@ class Board():
             # Bishop, Rook and queen movement
             if piece in ["white_bishop", "black_bishop", "white_rook",
                          "black_rook", "white_queen", "black_queen"]:
-                get_ray_piece_moves(self, i, enemy_pieces_lookup)
+                candidate_moves += (self.
+                                    get_ray_piece_moves(i,
+                                                        enemy_pieces_lookup))
 
             # Pawn movement
             elif piece == "white_pawn" or piece == "black_pawn":
@@ -305,6 +325,19 @@ class Board():
         # 3. capture on adjacent diagonal squares (if not pinned and an
         # oppenents piece is on the square, or if en passant is allowed).
 
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, R, N, B, K, Q, B, N, R, X, X
+        # X, X, P, P, _, P, P, P, P, P, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, P, p, p, _, _, _, X, X
+        # X, X, _,?_,?_,?_, _, _, _, _, X, X
+        # X, X, p, p,?p, _, _, p, p, p, X, X
+        # X, X, r, n, b, k, q, b, n, r, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+
         if self.cur_player_white:
             pawn_move_offset = i + 12
             pawn_captures_offsets = [i + 11, i + 13]
@@ -354,6 +387,13 @@ class Board():
         #
         # The knight has less complicated movement than the pawn. Every offset
         # needs the exact same checks done for validity.
+        #
+        # For an example of how this algorithm works, look at the move
+        # generation function that calls this function.
+
+        # TODO Offsets are incorrect.
+        #
+        # Example: "k7/8/8/4N3/8/8/8/3K4 b - - 13 56"
 
         knight_offsets = [i - (12 * 2) - 1, i - (12 * 2) + 1, i - 12 - 1, i -
                           12 + 1, i + 12 - 1, i + 12 + 1, i + 24 - 1, i + 24 +
@@ -378,6 +418,19 @@ class Board():
         #
         # TODO Castling
 
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X,?X,?X,?X, X, X, X, X, X
+        # X, X, R, N,?B, K,?Q, B, N, R, X, X
+        # X, X, P, P,?P,?P,?P, P, P, P, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, p, p, p, p, p, p, p, p, X, X
+        # X, X, r, n, b, k, q, b, n, r, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+
         king_offsets = [i - 13, i - 12, i - 11, i - 1, i + 1, i + 11, i + 12, i
                         + 13]
         valid_locations = enemy_pieces_lookup + [0]
@@ -396,28 +449,101 @@ class Board():
         # goes off the edge of the board.
         candidate_moves = []
 
-        piece = board[i]
+        piece = Board.__pieces_lookup[self.board[i]]
 
         valid_locations_lookup = enemy_pieces_lookup + [0]
 
         if piece == "white_bishop" or piece == "black_bishop":
-            candidate_moves.append(get_bishop_moves(self, i,
-                                                    valid_locations_lookup))
+            candidate_moves += self.get_bishop_moves(i, valid_locations_lookup)
         elif piece == "white_rook" or piece == "black_rook":
-            candidate_moves.append(get_rook_moves(self, i,
-                                                  valid_locations_lookup))
+            candidate_moves += self.get_rook_moves(i, valid_locations_lookup)
         elif piece == "white_queen" or piece == "black_queen":
             # Queen can be treated like a combination of a bishop and a rook
-            candidate_moves.append(get_bishop_moves(self, i,
-                                                    valid_locations_lookup))
-            candidate_moves.append(get_rook_moves(self, i,
-                                                  valid_locations_lookup))
+            candidate_moves += self.get_bishop_moves(i, valid_locations_lookup)
+            candidate_moves += self.get_rook_moves(i, valid_locations_lookup)
+
+        return candidate_moves
 
     def get_bishop_moves(self, i, valid_locations_lookup):
-        # TODO Get bishop moves
-        return []
+
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X,?X, X,?X, X, X, X, X, X, X
+        # X, X, R, N,?B, K, Q, B, N, R, X, X
+        # X, X, P,?P, P,?_, P, P, P, P, X, X
+        # X, X, _, _, _, _,?_, _, _, _, X, X
+        # X, X, _, _, _, P, _,?_, _, _, X, X
+        # X, X, _, _, _, _, _, _,?_, _, X, X
+        # X, X, _, _, _, p, _, _, _,?_, X, X
+        # X, X, p, p, p, _, p, p, p, p,?X, X
+        # X, X, r, n, b, k, q, b, n, r, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+
+        candidate_moves = []
+
+        bishop_desinations = []
+
+        # First, generate two diagonals for the bishop.
+
+        # Simplifies searching for next square.
+        direction_table = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+        for k in range(4):
+            cur_direction = direction_table[k]
+
+            # Used to determine whether to continue a looking for the next
+            # location. This is changed to true whenever the next location
+            # contains anything other than an empty space.
+            end_of_diagonal = False
+
+            # The longest possible diagonal is the fianchetto. With the bishop
+            # on a1, the diagonal would take 8 squares to find the edge of the
+            # board.
+            for j in range(1, 8):
+                next_piece_location = (i + (j * (12 * cur_direction[0])) + (j * cur_direction[1]))
+                piece = self.board[next_piece_location]
+                location_empty_val = Board.__pieces_lookup.index("empty")
+
+                # Sets end_of_diagonal to False if anything other than an empty
+                # location is encountered. Otherwise sets it to True to end the
+                # loop.
+                end_of_diagonal = (piece != location_empty_val)
+
+                # TODO Remove debug print
+                # print("next_piece_location", next_piece_location,
+                #       # "piece", piece,
+                #       "piece-name", Board.__pieces_lookup[piece],
+                #       "location_empty_val", location_empty_val,
+                #       "end_of_diagonal", end_of_diagonal)
+
+                # If piece in enemy lookup table or square is empty, mark
+                # location as a valid target square. Else mark the square
+                # invalid.
+                if piece in valid_locations_lookup:
+                    candidate_moves.append(next_piece_location)
+
+                # Do not continue searching after the first non-empty square is
+                # located. This speeds up the search and prevents any need for
+                # array bounds checking.
+                if end_of_diagonal:
+                    break
+
+        return candidate_moves
 
     def get_rook_moves(self, i, valid_locations_lookup):
+
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X,?X, X, X, X, X, X, X, X, X, X
+        # X,?X,?R,?N, B, K, Q, B, N, R, X, X
+        # X, X,?_, P, P, P, P, P, P, P, X, X
+        # X, X,?_, _, _, _, _, _, _, _, X, X
+        # X, X,?P, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, _, _, _, _, _, _, _, _, X, X
+        # X, X, p, p, p, p, p, p, p, p, X, X
+        # X, X, r, n, b, k, q, b, n, r, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+        # X, X, X, X, X, X, X, X, X, X, X, X
+
         # TODO Get rook moves
         return []
 
@@ -464,7 +590,7 @@ class Board():
         output_string = ""
 
         for i in range(9, 1, -1):
-            for j in range(9, 1, -1):
+            for j in range(2, 10):
                 output_string += str((i * 12) + j) + "\t"
             output_string += "\n"
 

@@ -57,6 +57,7 @@ if __name__ == '__main__':
 
     # Test fen processing and board drawing and move generation
     print()
+    print(Board.get_board_layout())
     print("# Testing fens 0 through " + str(len(fens) - 1) + " #")
     print()
     for i in range(len(fens)):
