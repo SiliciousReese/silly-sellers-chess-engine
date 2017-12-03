@@ -1,21 +1,15 @@
 # Board TODO #
 
+Allow for moves to be made
+
+Output fen representation of current board
+
 Currently many features are half implemented. The following are incomplete
 
 * Fen only imports position, not board state such as current player
 
-* Only white pawns have move generation
-
 Code is hacky and not well thought out. Needs to be restructured and
 documented
-
-Piece move generation is started.
-
-* White pawn movement is implemented and tested
-
-* Black pawn movement needs to be tested
-
-* No other pieces have been implemented
 
 Proper testing framework
 
@@ -24,9 +18,17 @@ Proper testing framework
 
 # What is implemented? #
 
-Currently white pawn movement generation (ignoring pins and en passant) has
-been tested to work correctly.
+All legal moves can be generated. This appears to be implemented correctly, but
+more testing is required
 
 The board position can be read from an fen string, but not the rest of the
 string (current player, castling availablity, en passant, move counter). This
 has been tested.
+
+# Features that need to be tested #
+
+Test move generation
+
+Test algebriac conversion
+
+Test fen import

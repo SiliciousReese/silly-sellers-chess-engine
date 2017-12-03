@@ -463,11 +463,6 @@ class Board():
             candidate_moves = self.get_rook_moves(i, valid_locations_lookup)
         elif piece == "white_queen" or piece == "black_queen":
             # Queen can be treated like a combination of a bishop and a rook
-            # TODO Queen bug: reports non existent move? For instance, with
-            # queen on h5, tries to move from h5 to no square? Missing h5g6?
-            #
-            # Example:
-            # "r2q3r/5k1p/p2p2p1/1p2n1bQ/4P3/2N5/PPP4P/1K1R1B1R w - - 0 19"
             candidate_moves = self. \
                 get_bishop_moves(i, valid_locations_lookup) \
                 + self.get_rook_moves(i, valid_locations_lookup)
@@ -591,6 +586,9 @@ class Board():
                     break
 
         return candidate_moves
+
+    def make_move(from_algebriac_location, to_algebriac_location):
+        pass
 
     def get_algebraic_from_index(index):
         # Convert from a board location array index to algebraic board location
