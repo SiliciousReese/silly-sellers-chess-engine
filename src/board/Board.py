@@ -526,6 +526,7 @@ class Board():
         return candidate_moves
 
     def get_rook_moves(self, i, valid_locations_lookup):
+        """ Return valid rook moves """
 
         # X, X, X, X, X, X, X, X, X, X, X, X
         # X, X,?X, X, X, X, X, X, X, X, X, X
@@ -539,9 +540,6 @@ class Board():
         # X, X, r, n, b, k, q, b, n, r, X, X
         # X, X, X, X, X, X, X, X, X, X, X, X
         # X, X, X, X, X, X, X, X, X, X, X, X
-
-        # TODO Rook moves were copy-pasted from bishop moves... because that
-        # couldn't possibly cause any problems...
 
         candidate_moves = []
 
