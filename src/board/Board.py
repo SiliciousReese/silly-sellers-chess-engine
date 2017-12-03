@@ -1,6 +1,10 @@
-# Board representation
+# Board representation. Backend for chess engine.
 
+# Regular expression. Currently used for parsing fen string.
 import re
+
+# Python logging.
+import logging
 
 
 class Board():
@@ -93,6 +97,10 @@ class Board():
 
         if fen is not None:
             self.read_position(fen)
+            logging.debug("Created new board from fen.")
+            logging.debug("fen: " + str(fen))
+        else:
+            logging.debug("Created new default board.")
 
     def __str__(self):
         """ Return an ascii representation of the current board. """

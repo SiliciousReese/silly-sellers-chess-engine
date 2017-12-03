@@ -2,6 +2,8 @@
 
 import random
 
+import logging
+
 from Board import Board
 
 # A Standalone program to debug board features
