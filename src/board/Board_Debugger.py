@@ -6,8 +6,11 @@ from Board import Board
 
 # A Standalone program to debug board features
 
+# TODO Start using a proper debugging framework, perhaps one built into python.
+
 
 def play_game_loop(board):
+    """ Temporary game movement debugging. """
     user_input = input("keep playing? y/yes\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")
@@ -130,4 +133,5 @@ if __name__ == '__main__':
     board.make_move("e2", "e4")
     print(board)
 
+    # Allow interactive debugging
     play_game_loop(board)
