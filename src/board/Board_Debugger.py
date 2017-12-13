@@ -13,6 +13,9 @@ from Board import Board
 
 def play_game_loop(board):
     """ Temporary game movement debugging. """
+
+    # Destroy old board
+    # board = Board()
     user_input = input("keep playing? y/yes\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")
@@ -24,7 +27,7 @@ def play_game_loop(board):
 
             while move not in valid_moves:
                 print("invalid move")
-                print("here are some choices", valid_moves_from_fens)
+                print("here are some choices", valid_moves)
                 move = input()
                 if move == "quit" or move == "q":
                     quit()
