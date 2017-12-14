@@ -693,11 +693,9 @@ class Board():
 
         king_in_check = False
 
-        old_player = self.cur_player_white
-
         self.cur_player_white = not self.cur_player_white
-
         enemy_moves = self.get_all_moves(checking_king=True)
+        self.cur_player_white = not self.cur_player_white
 
         # Break is used to leave the loop early if an attacker if found.
         for move in enemy_moves:
@@ -735,6 +733,9 @@ class Board():
             valid_moves = self.get_all_moves()
 
             if move_algebraic not in valid_moves:
+                logging.exception("Invalid move played " + move_algebraic)
+                logging.info("Moves: " + str(valid_moves))
+                logging.info("Board: " + str(self))
                 raise RuntimeError("Move not valid")
 
             # Convert from algebraic to board indices

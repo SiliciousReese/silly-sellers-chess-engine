@@ -44,7 +44,6 @@ def play_game_loop(board):
 
 
 def main_debugging():
-
     # Some sample fen strings for testing. fens[0] is Start position. fens[1]
     # is the common open game. [2] is a knight endgame. [3] is from another
     # opening. [4] is from a sicilian game.
