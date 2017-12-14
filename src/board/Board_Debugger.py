@@ -4,7 +4,7 @@ import random
 
 import logging
 
-from Board import Board
+from board.Board import Board
 
 # A Standalone program to debug board features
 
@@ -43,7 +43,7 @@ def play_game_loop(board):
         user_input = input("keep playing? y/yes\n")
 
 
-if __name__ == '__main__':
+def main_debugging():
 
     # Some sample fen strings for testing. fens[0] is Start position. fens[1]
     # is the common open game. [2] is a knight endgame. [3] is from another
