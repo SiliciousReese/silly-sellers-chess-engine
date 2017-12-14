@@ -15,7 +15,7 @@ def play_game_loop(board):
     """ Temporary game movement debugging. """
 
     # Destroy old board
-    # board = Board()
+    board = Board("k7/8/8/4N3/8/8/8/3K4 b - - 13 56")
     user_input = input("keep playing? y/yes\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")

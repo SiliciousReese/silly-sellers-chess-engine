@@ -237,8 +237,11 @@ class Board():
         # TODO Return an fen representation of the current board
         pass
 
-    def get_all_moves(self):
-        """ Returns a list of all valid moves from the current position in
+    def get_all_moves(self, checking_king=False):
+        """ checking_king should be true if the function is used to check if
+        the king is in check. This prevents endless recursion.
+
+        Returns a list of all valid moves from the current position in
         algebraic notation.
 
         TODO Currently returns moves in uci notation. """
@@ -306,6 +309,10 @@ class Board():
         # List of legal moves.
         moves = []
 
+        # Keep track of the index of the current player's king to determine if
+        # it is in check.
+        king_location = -1
+
         # Find the location of each of the current players pieces.
         # TODO Subtracting one was unintentional here. This will make it skip
         # the last element of the array. However, this is not bad because that
@@ -329,6 +336,7 @@ class Board():
             enemy_pieces_lookup = [1, 2, 3, 4, 5, 6]
 
         # Check all possible moves for each piece.
+        # TODO For all helper functions, rename i argument.
         for i in cur_pieces_list:
             piece = self.__pieces_lookup[self.board[i]]
 
@@ -352,17 +360,17 @@ class Board():
                 candidate_moves += self. \
                     get_knight_moves(i, enemy_pieces_lookup)
 
-            # King movement
+            # King detection and movement
             elif piece == "white_king" or piece == "black_king":
+                king_location = i
                 candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
             # Convert moves to uci (similar to algebraic notation, but uses
             # source location instead of source piece). See uci documentation.
             for j in candidate_moves:
-                moves.append(Board.get_algebraic_from_index(i) +
-                             Board.get_algebraic_from_index(j))
-
-        # TODO Check if king left in check
+                if (not checking_king) and (not self.is_king_in_check(i)):
+                    moves.append(Board.get_algebraic_from_index(i) +
+                                 Board.get_algebraic_from_index(j))
 
         return moves
 
@@ -423,7 +431,7 @@ class Board():
         # Short repeated use of board size
         b_size = Board.__board_size
 
-        # The currently tested potential desination location for the pawn.
+        # The currently tested potential destination location for the pawn.
         location = 0
 
         if self.cur_player_white:
@@ -673,6 +681,39 @@ class Board():
                     break
 
         return candidate_moves
+
+    def is_king_in_check(self, king_location):
+        ''' Return True if the current player's king is attacked by an enemy
+        piece. '''
+
+        # Strategy: Find a list of every square that an enemy piece is
+        # attacking and check if the king is on one of those squares.
+        # Potentially this will be very similar to regular move generation,
+        # perhaps I can just call it with the current player inverted.
+
+        king_in_check = False
+
+        old_player = self.cur_player_white
+
+        self.cur_player_white = not self.cur_player_white
+
+        enemy_moves = self.get_all_moves(checking_king=True)
+
+        # Break is used to leave the loop early if an attacker if found.
+        for move in enemy_moves:
+            # 1. Store king location in algebraic
+            king_algebriac = get_algebraic_from_index(king_location)
+
+            # 2. Check if second algebraic location of each move in enemy_moves
+            # matches the king's location. The algebriac location of the
+            # attacked square in uci notation is the last two characters in the
+            # move notation.
+            attacked_square = enemy_moves[2] + enemy_moves[3]
+            if attacked_square == king_algebriac:
+                king_in_check = True
+                break
+
+        return king_in_check
 
     def make_move(self, from_algebraic_location, to_algebraic_location=None):
         """ Make a move on the board. Test whether the move is valid, perhaps
