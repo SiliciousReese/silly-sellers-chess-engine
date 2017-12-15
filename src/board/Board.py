@@ -80,6 +80,15 @@ class Board():
                        "black_rook", "black_bishop", "black_knight",
                        "black_pawn"]
 
+    def get_board_size(self):
+        return Board.__board_size
+
+    def get_piece_chars(self):
+        return Board.List(__piece_chars)
+
+    def get_pieces_lookup(self):
+        return Board.List(__pieces_lookup)
+
     def __init__(self, fen=None):
         """ Sets the board to the start position or a position from an fen. """
 
@@ -97,10 +106,6 @@ class Board():
 
         if fen is not None:
             self.read_position(fen)
-            logging.debug("Created new board from fen.")
-            logging.debug("fen: " + str(fen))
-        else:
-            logging.debug("Created new default board.")
 
     def __str__(self):
         """ Return an ascii representation of the current board. """
@@ -178,7 +183,7 @@ class Board():
         ranks.append(fen_board[prev_index + 1:len(fen_board)])
 
         for i in range(len(ranks)):
-            cur_rank = ranks[i]
+            # cur_rank = ranks[i]
 
             # Location on the board to start placing pieces
             starting_indices = [110, 98, 86, 74, 62, 50, 38, 26]
@@ -309,10 +314,6 @@ class Board():
         # List of legal moves.
         moves = []
 
-        # Keep track of the index of the current player's king to determine if
-        # it is in check.
-        king_location = -1
-
         # Find the location of each of the current players pieces.
         # TODO Subtracting one was unintentional here. This will make it skip
         # the last element of the array. However, this is not bad because that
@@ -362,15 +363,18 @@ class Board():
 
             # King detection and movement
             elif piece == "white_king" or piece == "black_king":
-                king_location = i
                 candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
 
             # Convert moves to uci (similar to algebraic notation, but uses
             # source location instead of source piece). See uci documentation.
             for j in candidate_moves:
-                if (not checking_king) and (not self.is_king_in_check(i)):
-                    moves.append(Board.get_algebraic_from_index(i) +
-                                 Board.get_algebraic_from_index(j))
+                # If being used to determine if king is in check, do not check
+                # if next player would be left in check (short circuit to avoid
+                # infinite recursion), but do still add moves. Otherwise, if
+                # the king is left in check, do not allow moves.
+                if (checking_king) or (not self.is_king_in_check(i)):
+                    moves.append(get_algebraic_from_index(i) +
+                                 get_algebraic_from_index(j))
 
         return moves
 
@@ -432,7 +436,7 @@ class Board():
         b_size = Board.__board_size
 
         # The currently tested potential destination location for the pawn.
-        location = 0
+        # location = 0
 
         if self.cur_player_white:
             pawn_move_offset = i + b_size
@@ -697,16 +701,17 @@ class Board():
         enemy_moves = self.get_all_moves(checking_king=True)
         self.cur_player_white = not self.cur_player_white
 
+        # 1. Store king location in algebraic
+        king_algebriac = get_algebraic_from_index(king_location)
+
         # Break is used to leave the loop early if an attacker if found.
         for move in enemy_moves:
-            # 1. Store king location in algebraic
-            king_algebriac = get_algebraic_from_index(king_location)
 
             # 2. Check if second algebraic location of each move in enemy_moves
             # matches the king's location. The algebriac location of the
             # attacked square in uci notation is the last two characters in the
             # move notation.
-            attacked_square = enemy_moves[2] + enemy_moves[3]
+            attacked_square = move[2] + move[3]
             if attacked_square == king_algebriac:
                 king_in_check = True
                 break
@@ -753,72 +758,76 @@ class Board():
             # Alternate current players
             self.cur_player_white = not self.cur_player_white
 
-    def get_algebraic_from_index(index):
-        """ Convert from a board location array index to algebraic board
-        location
 
-        index = 26 -> a1, index = 38 -> a2 """
+def get_algebraic_from_index(index):
+    """ Convert from a board location array index to algebraic board
+    location
 
-        algebraic = ""
+    index = 26 -> a1, index = 38 -> a2 """
 
-        # TODO Document how algebraic values are retrieved from tables and
-        # math.
-        if index in [26, 38, 50, 62, 74, 86, 98, 110]:
-            algebraic = "a" + str(((index - 2) // 12) - 1)
+    algebraic = ""
 
-        elif index in [27, 39, 51, 63, 75, 87, 99, 111]:
-            algebraic = "b" + str(((index - 3) // 12) - 1)
+    # TODO Document how algebraic values are retrieved from tables and
+    # math.
+    if index in [26, 38, 50, 62, 74, 86, 98, 110]:
+        algebraic = "a" + str(((index - 2) // 12) - 1)
 
-        elif index in [28, 40, 52, 64, 76, 88, 100, 112]:
-            algebraic = "c" + str(((index - 4) // 12) - 1)
+    elif index in [27, 39, 51, 63, 75, 87, 99, 111]:
+        algebraic = "b" + str(((index - 3) // 12) - 1)
 
-        elif index in [29, 41, 53, 65, 77, 89, 101, 113]:
-            algebraic = "d" + str(((index - 5) // 12) - 1)
+    elif index in [28, 40, 52, 64, 76, 88, 100, 112]:
+        algebraic = "c" + str(((index - 4) // 12) - 1)
 
-        elif index in [30, 42, 54, 66, 78, 90, 102, 114]:
-            algebraic = "e" + str(((index - 6) // 12) - 1)
+    elif index in [29, 41, 53, 65, 77, 89, 101, 113]:
+        algebraic = "d" + str(((index - 5) // 12) - 1)
 
-        elif index in [31, 43, 55, 67, 79, 91, 103, 115]:
-            algebraic = "f" + str(((index - 7) // 12) - 1)
+    elif index in [30, 42, 54, 66, 78, 90, 102, 114]:
+        algebraic = "e" + str(((index - 6) // 12) - 1)
 
-        elif index in [32, 44, 56, 68, 80, 92, 104, 116]:
-            algebraic = "g" + str(((index - 8) // 12) - 1)
+    elif index in [31, 43, 55, 67, 79, 91, 103, 115]:
+        algebraic = "f" + str(((index - 7) // 12) - 1)
 
-        elif index in [33, 45, 57, 69, 81, 93, 105, 117]:
-            algebraic = "h" + str(((index - 9) // 12) - 1)
+    elif index in [32, 44, 56, 68, 80, 92, 104, 116]:
+        algebraic = "g" + str(((index - 8) // 12) - 1)
 
-        return algebraic
+    elif index in [33, 45, 57, 69, 81, 93, 105, 117]:
+        algebraic = "h" + str(((index - 9) // 12) - 1)
 
-    def get_index_from_algebraic(algebraic):
-        """ Return the board index of a given algebraic board location. """
+    return algebraic
 
-        # A simple table that has the unique algebraic strings at the correct
-        # location on the board. Some spaces have been removed on purpose to
-        # keep the line length under 80 without damaging readability.
-        algebraic_conversion_table = \
-            ["", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
-             "", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
-             "", "", "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "", "",
-             "", "", "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", "", "",
-             "", "", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", "", "",
-             "", "", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "", "",
-             "", "", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", "", "",
-             "", "", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "", "",
-             "", "", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "", "",
-             "", "", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
 
-        return algebraic_conversion_table.index(algebraic)
+def get_index_from_algebraic(algebraic):
+    """ Return the board index of a given algebraic board location. """
 
-    def get_board_layout():
-        """ Returns a string with a visual representation of how the board is
-        mapped to an array. Useful for debugging. The Outer section of the
-        board, the part used for out of bounds detection, is not shown. """
+    # A simple table that has the unique algebraic strings at the correct
+    # location on the board. Some spaces have been removed on purpose to
+    # keep the line length under 80 without damaging readability.
+    algebraic_conversion_table = \
+        ["", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
+            "", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
+            "", "", "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "", "",
+            "", "", "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", "", "",
+            "", "", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", "", "",
+            "", "", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "", "",
+            "", "", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", "", "",
+            "", "", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "", "",
+            "", "", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "", "",
+            "", "", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
 
-        output_string = ""
+    return algebraic_conversion_table.index(algebraic)
 
-        for i in range(9, 1, -1):
-            for j in range(2, 10):
-                output_string += str((i * Board.__board_size) + j) + "\t"
-            output_string += "\n"
 
-        return output_string
+def get_board_layout():
+    """ Returns a string with a visual representation of how the board is
+    mapped to an array. Useful for debugging. The Outer section of the
+    board, the part used for out of bounds detection, is not shown. """
+
+    output_string = ""
+    board = Board()
+
+    for i in range(9, 1, -1):
+        for j in range(2, 10):
+            output_string += str((i * board.get_board_size()) + j) + "\t"
+        output_string += "\n"
+
+    return output_string

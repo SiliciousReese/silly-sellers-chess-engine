@@ -4,7 +4,7 @@ import random
 
 import logging
 
-from board.Board import Board
+from board import Board
 
 # A Standalone program to debug board features
 
@@ -15,7 +15,8 @@ def play_game_loop(board):
     """ Temporary game movement debugging. """
 
     # Destroy old board
-    board = Board("k7/8/8/4N3/8/8/8/3K4 b - - 13 56")
+    # board = Board("k7/8/8/4N3/8/8/8/3K4 b - - 13 56")
+
     user_input = input("keep playing? y/yes\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")
@@ -72,7 +73,11 @@ def main_debugging():
 
             # [7] Sample position with bishop on h1 with empty diagonal. Used
             # to test bishop movement
-            "1nbqkbnr/r3ppp1/1p1p3p/p1p1P3/7P/6P1/PPPP1P1R/RNBQK1NB w Qk - 2 8"
+            "1nbqkbnr/r3ppp1/1p1p3p/p1p1P3/7P/6P1/PPPP1P1R/RNBQK1NB w Qk - 2 "
+            "8",
+
+            # [8]
+            "2r2rk1/1p3pp1/pN5p/4p1b1/4P1P1/5Q1P/PP6/K1qR4 w - - 2 23"
            ]
 
     valid_moves_from_fens = [
@@ -93,9 +98,11 @@ def main_debugging():
         # [6]
         None,
         # [7]
+        None,
+        # [8]
         None]
 
-    board = Board()
+    board = Board.Board()
     str(board)
 
     # Test fen processing and board drawing and move generation
@@ -130,12 +137,13 @@ def main_debugging():
 
     # Test making move
 
-    board = Board()
+    # board = board.Board()
+    # print(board.get_all_moves())
+    # print(board)
+    # board.make_move("e2", "e4")
+    # print(board)
 
-    print(board.get_all_moves())
-    print(board)
-    board.make_move("e2", "e4")
-    print(board)
+    board = Board.Board(fens[8])
 
     # Allow interactive debugging
     play_game_loop(board)
