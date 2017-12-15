@@ -84,10 +84,10 @@ class Board():
         return Board.__board_size
 
     def get_piece_chars(self):
-        return Board.List(__piece_chars)
+        return Board.List(Board.__piece_chars)
 
     def get_pieces_lookup(self):
-        return Board.List(__pieces_lookup)
+        return Board.List(Board.__pieces_lookup)
 
     def __init__(self, fen=None):
         """ Sets the board to the start position or a position from an fen. """
