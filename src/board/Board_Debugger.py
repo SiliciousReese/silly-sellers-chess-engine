@@ -17,14 +17,14 @@ def play_game_loop(board):
     # Destroy old board
     # board = Board("k7/8/8/4N3/8/8/8/3K4 b - - 13 56")
 
-    user_input = input("keep playing? y/yes\n")
+    user_input = input("y/yes to keep playing\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")
 
         if not (user_input == "help" or user_input == "quit"
                 or user_input == "q"):
             move = user_input
-            valid_moves = board.get_all_moves()
+            valid_moves = sorted(board.get_all_moves())
 
             while move not in valid_moves:
                 print("invalid move")
@@ -88,7 +88,7 @@ def main_debugging():
         # [1]
         None,
         # [2]
-        None,
+        ['a8a7', 'a8b7', 'a8b8'],
         # [3]
         None,
         # [4]
