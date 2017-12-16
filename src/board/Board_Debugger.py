@@ -4,7 +4,7 @@ import random
 
 import logging
 
-from board import Board
+from Board import Board
 
 # A Standalone program to debug board features
 
@@ -15,16 +15,15 @@ def play_game_loop(board):
     """ Temporary game movement debugging. """
 
     # Destroy old board
-    # board = Board("k7/8/8/4N3/8/8/8/3K4 b - - 13 56")
-
-    user_input = input("y/yes to keep playing\n")
+    # board = Board()
+    user_input = input("keep playing? y/yes\n")
     while user_input == "yes" or user_input == "y":
         user_input = input("enter move or help\n")
 
         if not (user_input == "help" or user_input == "quit"
                 or user_input == "q"):
             move = user_input
-            valid_moves = sorted(board.get_all_moves())
+            valid_moves = board.get_all_moves()
 
             while move not in valid_moves:
                 print("invalid move")
@@ -44,7 +43,8 @@ def play_game_loop(board):
         user_input = input("keep playing? y/yes\n")
 
 
-def main_debugging():
+if __name__ == '__main__':
+
     # Some sample fen strings for testing. fens[0] is Start position. fens[1]
     # is the common open game. [2] is a knight endgame. [3] is from another
     # opening. [4] is from a sicilian game.
@@ -73,11 +73,7 @@ def main_debugging():
 
             # [7] Sample position with bishop on h1 with empty diagonal. Used
             # to test bishop movement
-            "1nbqkbnr/r3ppp1/1p1p3p/p1p1P3/7P/6P1/PPPP1P1R/RNBQK1NB w Qk - 2 "
-            "8",
-
-            # [8]
-            "2r2rk1/1p3pp1/pN5p/4p1b1/4P1P1/5Q1P/PP6/K1qR4 w - - 2 23"
+            "1nbqkbnr/r3ppp1/1p1p3p/p1p1P3/7P/6P1/PPPP1P1R/RNBQK1NB w Qk - 2 8"
            ]
 
     valid_moves_from_fens = [
@@ -88,7 +84,7 @@ def main_debugging():
         # [1]
         None,
         # [2]
-        ['a8a7', 'a8b7', 'a8b8'],
+        None,
         # [3]
         None,
         # [4]
@@ -98,11 +94,9 @@ def main_debugging():
         # [6]
         None,
         # [7]
-        None,
-        # [8]
         None]
 
-    board = Board.Board()
+    board = Board()
     str(board)
 
     # Test fen processing and board drawing and move generation
@@ -137,13 +131,12 @@ def main_debugging():
 
     # Test making move
 
-    # board = board.Board()
-    # print(board.get_all_moves())
-    # print(board)
-    # board.make_move("e2", "e4")
-    # print(board)
+    board = Board()
 
-    board = Board.Board(fens[8])
+    print(board.get_all_moves())
+    print(board)
+    board.make_move("e2", "e4")
+    print(board)
 
     # Allow interactive debugging
     play_game_loop(board)
