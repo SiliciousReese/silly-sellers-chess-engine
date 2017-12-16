@@ -84,10 +84,10 @@ class Board():
         return Board.__board_size
 
     def get_piece_chars(self):
-        return Board.List(__piece_chars)
+        return Board.List(Board.__piece_chars)
 
     def get_pieces_lookup(self):
-        return Board.List(__pieces_lookup)
+        return Board.List(Board.__pieces_lookup)
 
     def __init__(self, fen=None):
         """ Sets the board to the start position or a position from an fen. """
@@ -255,7 +255,7 @@ class Board():
         #
         # Search for every possible move by looking for every piece the current
         # player controls and then using a lookup table for non 'ray' pieces
-        # (bishop, rook, queen) to look for all their potention moves.
+        # (bishop, rook, queen) to look for all their potential moves.
         #
         # Steps
         #
@@ -314,6 +314,10 @@ class Board():
         # List of legal moves.
         moves = []
 
+        # Used to check for if the king is in check at the end.
+        king_index = -1
+        king_candidate_moves = None
+
         # Find the location of each of the current players pieces.
         # TODO Subtracting one was unintentional here. This will make it skip
         # the last element of the array. However, this is not bad because that
@@ -347,14 +351,14 @@ class Board():
             if piece in ["white_bishop", "black_bishop",
                          "white_rook", "black_rook",
                          "white_queen", "black_queen"]:
-                candidate_moves += (
-                    self.get_ray_piece_moves(i, enemy_pieces_lookup))
+                candidate_moves += self. \
+                    get_ray_piece_moves(i, enemy_pieces_lookup)
 
             # Pawn movement
             elif piece == "white_pawn" or piece == "black_pawn":
                 # Currently pawns are the only implemented piece
-                candidate_moves += self.get_legal_pawn_moves(
-                    i, enemy_pieces_lookup)
+                candidate_moves += self. \
+                    get_legal_pawn_moves(i, enemy_pieces_lookup)
 
             # Knight movement
             elif piece == "white_knight" or piece == "black_knight":
@@ -363,18 +367,38 @@ class Board():
 
             # King detection and movement
             elif piece == "white_king" or piece == "black_king":
-                candidate_moves += self.get_king_moves(i, enemy_pieces_lookup)
+                king_index = i
+                king_candidate_moves = self.get_king_moves(i,
+                                                           enemy_pieces_lookup)
+                candidate_moves += king_candidate_moves
 
             # Convert moves to uci (similar to algebraic notation, but uses
             # source location instead of source piece). See uci documentation.
             for j in candidate_moves:
+                # Copy board data, restore after all moves have been checked.
+                board_copy = list(self.board)
+                castle_copy = list(self.castle_available)
+                en_passant_copy = self.en_passant_target
+                cur_player_copy = self.cur_player_white
+
+                move_algebraic = get_algebraic_from_index(i) + \
+                    get_algebraic_from_index(j)
+
+                # called with testing king to prevent recursion
+                self.make_move(move_algebraic, testing_king=True)
+
                 # If being used to determine if king is in check, do not check
                 # if next player would be left in check (short circuit to avoid
                 # infinite recursion), but do still add moves. Otherwise, if
                 # the king is left in check, do not allow moves.
-                if (checking_king) or (not self.is_king_in_check(i)):
-                    moves.append(get_algebraic_from_index(i) +
-                                 get_algebraic_from_index(j))
+                if (checking_king) or (not self.is_king_in_check(king_index)):
+                    moves.append(move_algebraic)
+
+                # Restore board data
+                self.board = board_copy
+                self.castle_available = castle_copy
+                self.en_passant_target = en_passant_copy
+                self.cur_player_white = cur_player_copy
 
         return moves
 
@@ -704,6 +728,8 @@ class Board():
         # 1. Store king location in algebraic
         king_algebriac = get_algebraic_from_index(king_location)
 
+        # TODO king location is wrong here.
+        logging.debug("King location: " + king_algebriac)
         # Break is used to leave the loop early if an attacker if found.
         for move in enemy_moves:
 
@@ -718,7 +744,8 @@ class Board():
 
         return king_in_check
 
-    def make_move(self, from_algebraic_location, to_algebraic_location=None):
+    def make_move(self, from_algebraic_location, to_algebraic_location=None,
+                  testing_king=None):
         """ Make a move on the board. Test whether the move is valid, perhaps
         by testing if get_all_moves returns the given move, before calling
         function. If the move is invalid, a runtime exception will be raised.
@@ -728,16 +755,18 @@ class Board():
         if to_algebraic_location is None:
             # TODO Only allow length 4 string here
             move = from_algebraic_location
-            self.make_move(move[0] + move[1], move[2] + move[3])
+            self.make_move(move[0] + move[1], move[2] + move[3],
+                           testing_king=testing_king)
         else:
             move_from_index = move_to_index = piece = 0
 
             move_algebraic = from_algebraic_location + to_algebraic_location
 
-            # Test if move is valid
-            valid_moves = self.get_all_moves()
+            valid_moves = None
+            if testing_king is None:
+                valid_moves = self.get_all_moves()
 
-            if move_algebraic not in valid_moves:
+            if (valid_moves is not None) and move_algebraic not in valid_moves:
                 logging.exception("Invalid move played " + move_algebraic)
                 logging.info("Moves: " + str(valid_moves))
                 logging.info("Board: " + str(self))
@@ -745,10 +774,8 @@ class Board():
 
             # Convert from algebraic to board indices
 
-            move_from_index = Board. \
-                get_index_from_algebraic(from_algebraic_location)
-            move_to_index = Board. \
-                get_index_from_algebraic(to_algebraic_location)
+            move_from_index = get_index_from_algebraic(from_algebraic_location)
+            move_to_index = get_index_from_algebraic(to_algebraic_location)
 
             # remove piece at old location
             piece = self.board[move_from_index]
@@ -804,15 +831,15 @@ def get_index_from_algebraic(algebraic):
     # keep the line length under 80 without damaging readability.
     algebraic_conversion_table = \
         ["", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
-            "", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
-            "", "", "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "", "",
-            "", "", "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", "", "",
-            "", "", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", "", "",
-            "", "", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "", "",
-            "", "", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", "", "",
-            "", "", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "", "",
-            "", "", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "", "",
-            "", "", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
+         "", "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "", "",
+         "", "", "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "", "",
+         "", "", "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2", "", "",
+         "", "", "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3", "", "",
+         "", "", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "", "",
+         "", "", "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5", "", "",
+         "", "", "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6", "", "",
+         "", "", "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7", "", "",
+         "", "", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
 
     return algebraic_conversion_table.index(algebraic)
 
